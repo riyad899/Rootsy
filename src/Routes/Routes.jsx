@@ -4,6 +4,8 @@ import { Root } from '../Pages/Root/Root';
 import { Error } from '../Pages/ErrorPage/Error';
 import { Home } from '../Pages/Home/Home';
 import { createBrowserRouter } from 'react-router';
+import { Login } from '../Component/login/Login';
+import { Registration } from '../Component/Registration/Registration';
 
 export const router = createBrowserRouter([
     {
@@ -21,6 +23,18 @@ export const router = createBrowserRouter([
                 index: true,
                 path:"/",
                 Component: Home
+
+            },
+             {
+                index: true,
+                path:"/login",
+                Component: Login
+
+            },
+             {
+                index: true,
+                path:"/signup",
+                Component: Registration
 
             }
 

@@ -4,35 +4,21 @@ import leaf from '../../images/t.png';
 import { BsClock } from "react-icons/bs";
 import { CiPhone, CiMail, CiTwitter } from "react-icons/ci";
 import { FaFacebookF, FaInstagram, FaPinterest } from "react-icons/fa";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { FaLeaf, FaUser, FaSignInAlt, FaUserPlus } from 'react-icons/fa';
 import { NavLink } from 'react-router';
-
+;
 
 export const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
 
   // Mock user data
   const user = {
     name: 'Jane Gardener',
     photo: 'https://randomuser.me/api/portraits/women/44.jpg'
   };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const toggleLogin = () => {
     setIsLoggedIn(!isLoggedIn);
@@ -51,10 +37,10 @@ export const Navbar = () => {
     <div className="fixed w-full z-50">
       {/* Top Navbar with Leaf Background */}
       <div
-        className={`w-screen h-[50px] flex items-center bg-[#124a2f] bg-[length:100px_auto] bg-repeat transition-all duration-300 ${isScrolled ? 'opacity-100' : 'opacity-100'}`}
+        className="w-screen h-[50px] flex items-center bg-[#124a2f] bg-[length:100px_auto] bg-repeat"
         style={{ backgroundImage: `url(${leaf})` }}
       >
-        <div className='w-9/12 mx-auto flex justify-between items-center '>
+        <div className='w-9/12 mx-auto flex justify-between items-center'>
           <Marquee pauseOnHover className='w-10/12 hidden md:flex'>
             <div className='flex gap-10 items-center text-white text-sm'>
               <div className='flex items-center gap-2'>
@@ -83,15 +69,15 @@ export const Navbar = () => {
       </div>
 
       {/* Main Navigation */}
-      <nav className={`transition-all duration-300 border border-b-emerald-950/30 ${isScrolled ? 'bg-white shadow-md' : 'bg-transparent shadow-none'}`}>
+      <nav className="bg-white shadow-md border border-b-emerald-950/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             {/* Logo and main nav items */}
             <div className="flex items-center">
               {/* Logo */}
               <div className="flex-shrink-0 flex items-center">
-                <FaLeaf className={`h-8 w-8 transition-colors duration-300 ${isScrolled ? 'text-green-600' : 'text-white'}`} />
-                <span className={`ml-2 text-xl font-semibold transition-colors duration-300 ${isScrolled ? 'text-gray-600' : 'text-white'}`}>Rootsy</span>
+                <FaLeaf className="h-8 w-8 text-green-600" />
+                <span className="ml-2 text-xl font-semibold text-gray-600">Rootsy</span>
               </div>
               {/* Desktop Navigation */}
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
@@ -102,24 +88,14 @@ export const Navbar = () => {
                       key={link.name}
                       to={link.href}
                       className={({ isActive }) => {
-                        let baseClasses = "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-300";
-
-                        if (isActive) {
-                          return `${baseClasses} border-green-500 text-white`;
-                        }else{
-                          `${baseClasses} text-stone-950`
-                        }
-
-                        let inactiveTextColor = isScrolled
-                          ? "text-black hover:border-gray-300 hover:text-gray-700"
-                          : "text-white hover:border-gray-200 hover:text-gray-200";
-
-                        return `${baseClasses} border-transparent ${inactiveTextColor}`;
+                        let baseClasses = "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium";
+                        return isActive
+                          ? `${baseClasses} border-green-500 text-gray-900`
+                          : `${baseClasses} border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700`;
                       }}
                     >
                       {link.name}
                     </NavLink>
-
                   );
                 })}
               </div>
@@ -172,20 +148,14 @@ export const Navbar = () => {
                 <div className="flex space-x-4">
                   <NavLink
                     to="/login"
-                    className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm transition-colors duration-300 ${isScrolled
-                      ? 'text-white bg-green-600 hover:bg-green-700'
-                      : 'text-green-700 bg-white hover:bg-gray-100'
-                      }`}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700"
                   >
                     <FaSignInAlt className="mr-2" />
                     Login
                   </NavLink>
                   <NavLink
                     to="/signup"
-                    className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm transition-colors duration-300 ${isScrolled
-                      ? 'text-green-700 bg-green-100 hover:bg-green-200'
-                      : 'text-white bg-green-600 hover:bg-green-700'
-                      }`}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-green-700 bg-green-100 hover:bg-green-200"
                   >
                     <FaUserPlus className="mr-2" />
                     Sign Up
@@ -199,8 +169,7 @@ export const Navbar = () => {
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 type="button"
-                className={`inline-flex items-center justify-center p-2 rounded-md ${isScrolled ? 'text-gray-400 hover:text-gray-500' : 'text-white hover:text-gray-200'
-                  } hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-500`}
+                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-500"
                 aria-controls="mobile-menu"
                 aria-expanded="false"
               >
