@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { FaUser, FaEnvelope, FaLock, FaUserPlus, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../Provider/AuthContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const Registration = () => {
   const { createUser, setUser, googleSignIn } = useContext(AuthContext);
@@ -96,11 +98,29 @@ export const Registration = () => {
       .then((userCredential) => {
         const user = userCredential.user;
         setUser(user);
-        navigate('/login');
+        toast.success('🎉 Successfully registered!', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setTimeout(() => navigate('/login'), 1500);
       })
       .catch((error) => {
         const errorMessage = error.message;
         setErrorMessage(errorMessage);
+        toast.error(`❌ Registration failed: ${errorMessage}`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       });
   };
 
@@ -108,11 +128,28 @@ export const Registration = () => {
     googleSignIn()
       .then((result) => {
         const user = result.user;
-        console.log(user,result);
-        navigate('/login');
+        toast.success('🎉 Google registration successful!', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setTimeout(() => navigate('/login'), 1500);
       })
       .catch((error) => {
         setErrorMessage(error.message);
+        toast.error(`❌ Google registration failed: ${error.message}`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       });
   };
 
@@ -124,6 +161,7 @@ export const Registration = () => {
       transition={{ duration: 0.5 }}
       className="min-h-screen bg-gradient-to-br from-[#124A2F] to-[#0D3521] flex items-center justify-center p-4"
     >
+      <ToastContainer />
       <div className="max-w-6xl w-full flex flex-col lg:flex-row items-center justify-center gap-12 mt-[150px] mb-[20px]">
         {/* Left side - Branding/Illustration */}
         <motion.div

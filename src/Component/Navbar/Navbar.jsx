@@ -11,7 +11,7 @@ export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user, logOut } = useContext(AuthContext);
- 
+
 
   const handleLogOut = () => {
     logOut()
@@ -262,6 +262,12 @@ export const Navbar = () => {
           </div>
         )}
       </nav>
+
+      <div>
+        
+      </div>
+
+
     </div>
   );
 };

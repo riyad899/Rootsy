@@ -5,7 +5,8 @@ import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { getAuth, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import app from '../../Firebase/firebase.config';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const Login = () => {
   const [email, setEmail] = useState('');
@@ -14,9 +15,9 @@ export const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-const auth = getAuth(app);
+  const auth = getAuth(app);
 
-
+  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -61,9 +62,36 @@ const auth = getAuth(app);
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/');
+      toast.success('🎉 Successfully logged in!', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      setTimeout(() => navigate('/'), 1500);
     } catch (err) {
-      setError(err.message);
+      let errorMessage = 'Login failed';
+      if (err.code === 'auth/invalid-email') {
+        errorMessage = 'Invalid email address';
+      } else if (err.code === 'auth/user-not-found') {
+        errorMessage = 'User not found';
+      } else if (err.code === 'auth/wrong-password') {
+        errorMessage = 'Incorrect password';
+      }
+
+      setError(errorMessage);
+      toast.error(`❌ ${errorMessage}`, {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       setLoading(false);
     }
   };
@@ -75,14 +103,30 @@ const auth = getAuth(app);
 
     try {
       await signInWithPopup(auth, provider);
-      navigate('/');
+      toast.success('🎉 Google login successful!', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      setTimeout(() => navigate('/'), 1500);
     } catch (err) {
       setError(err.message);
+      toast.error(`❌ Google login failed: ${err.message}`, {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       setLoading(false);
     }
   };
-
-
 
   return (
     <motion.div
@@ -92,6 +136,18 @@ const auth = getAuth(app);
       transition={{ duration: 0.5 }}
       className="min-h-screen bg-gradient-to-br from-[#124A2F] to-[#0D3521] flex items-center justify-center p-4"
     >
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
+
       <div className="max-w-6xl w-full flex flex-col lg:flex-row items-center justify-center gap-12 mt-[100px]">
         {/* Left side - Branding/Illustration */}
         <motion.div
