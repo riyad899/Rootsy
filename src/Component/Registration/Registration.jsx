@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import GoogleButton from 'react-google-button';
 import { motion } from 'framer-motion';
 import { FaUser, FaEnvelope, FaLock, FaUserPlus } from 'react-icons/fa';
-import { NavLink } from 'react-router';
+import { NavLink } from 'react-router-dom'; // Fixed import
+import { AuthContext } from '../../Provider/AuthContext';
 
 export const Registration = () => {
+  const { createUser,setUser } = useContext(AuthContext);
+
+
+
+
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -42,6 +48,24 @@ export const Registration = () => {
       }
     }
   };
+
+  const handleRegister = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const name = form.name.value;
+    const email = form.email.value;
+    const photoURL = form.url.value;
+    const password = form.password.value;
+    const confirmPass = form.confirmPass.value;
+    createUser(email, password).then((userCredential) => {
+      const user = userCredential.user;
+      setUser(user);
+    })
+      .catch((error) => {
+        const errorMessage = error.message;
+        console.log(errorMessage)
+      });
+  }
 
   return (
     <motion.div
@@ -91,7 +115,7 @@ export const Registration = () => {
           animate="visible"
           className="w-full max-w-md"
         >
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <form onSubmit={handleRegister} className="bg-white rounded-2xl shadow-xl overflow-hidden">
             <div className="p-1 bg-gradient-to-r from-[#124A2F] to-[#1a6d45]"></div>
 
             <motion.div
@@ -114,10 +138,12 @@ export const Registration = () => {
                   Full Name
                 </label>
                 <motion.input
+                  name="name"
                   whileFocus={{ scale: 1.02, boxShadow: "0 0 0 2px rgba(18, 74, 47, 0.5)" }}
                   type="text"
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#124A2F] transition-all"
                   placeholder="John Doe"
+                  required
                 />
               </motion.div>
 
@@ -127,14 +153,14 @@ export const Registration = () => {
                   Email Address
                 </label>
                 <motion.input
+                  name="email"
                   whileFocus={{ scale: 1.02, boxShadow: "0 0 0 2px rgba(18, 74, 47, 0.5)" }}
                   type="email"
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#124A2F] transition-all"
                   placeholder="your@email.com"
+                  required
                 />
               </motion.div>
-
-
 
               <motion.div variants={itemVariants} className="mb-4">
                 <label className="block text-gray-700 text-sm font-medium mb-2 flex items-center">
@@ -142,14 +168,13 @@ export const Registration = () => {
                   Photo URL
                 </label>
                 <motion.input
+                  name="url"
                   whileFocus={{ scale: 1.02, boxShadow: "0 0 0 2px rgba(18, 74, 47, 0.5)" }}
-                  type="Photo URL"
+                  type="url"
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#124A2F] transition-all"
                   placeholder="Photo URL"
                 />
               </motion.div>
-
-
 
               <motion.div variants={itemVariants} className="mb-4">
                 <label className="block text-gray-700 text-sm font-medium mb-2 flex items-center">
@@ -157,10 +182,12 @@ export const Registration = () => {
                   Password
                 </label>
                 <motion.input
+                  name="password"
                   whileFocus={{ scale: 1.02, boxShadow: "0 0 0 2px rgba(18, 74, 47, 0.5)" }}
                   type="password"
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#124A2F] transition-all"
                   placeholder="••••••••"
+                  required
                 />
               </motion.div>
 
@@ -170,21 +197,24 @@ export const Registration = () => {
                   Confirm Password
                 </label>
                 <motion.input
+                  name="confirmPass"
                   whileFocus={{ scale: 1.02, boxShadow: "0 0 0 2px rgba(18, 74, 47, 0.5)" }}
                   type="password"
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#124A2F] transition-all"
                   placeholder="••••••••"
+                  required
                 />
               </motion.div>
 
               <motion.div variants={itemVariants} className="mb-6 flex items-center">
-                <input type="checkbox" id="terms" className="mr-2 rounded text-[#124A2F] focus:ring-[#124A2F]" />
+                <input type="checkbox" id="terms" className="mr-2 rounded text-[#124A2F] focus:ring-[#124A2F]" required />
                 <label htmlFor="terms" className="text-sm text-gray-600">
                   I agree to the <a href="#" className="text-[#124A2F] hover:underline">Terms and Conditions</a>
                 </label>
               </motion.div>
 
               <motion.button
+                type='submit'
                 variants={itemVariants}
                 whileHover={{ scale: 1.02, boxShadow: "0 4px 12px rgba(18, 74, 47, 0.3)" }}
                 whileTap={{ scale: 0.98 }}
@@ -193,7 +223,7 @@ export const Registration = () => {
                 Create Account
               </motion.button>
 
-                <motion.div
+              <motion.div
                 variants={itemVariants}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -204,8 +234,6 @@ export const Registration = () => {
                   className="w-full flex justify-center"
                 />
               </motion.div>
-
-
 
               <motion.div
                 variants={itemVariants}
@@ -220,7 +248,7 @@ export const Registration = () => {
                 </NavLink>
               </motion.div>
             </motion.div>
-          </div>
+          </form>
         </motion.div>
       </div>
     </motion.div>
