@@ -1,12 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import GoogleButton from 'react-google-button';
-
 import { motion } from 'framer-motion';
-import { FaUser, FaLock, FaGoogle } from 'react-icons/fa';
-import { NavLink } from 'react-router';
+import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { getAuth, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import app from '../../Firebase/firebase.config';
+
 
 export const Login = () => {
-  // Animation variants
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+const auth = getAuth(app);
+
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -43,6 +53,36 @@ export const Login = () => {
       }
     }
   };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate('/');
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setError('');
+    setLoading(true);
+    const provider = new GoogleAuthProvider();
+
+    try {
+      await signInWithPopup(auth, provider);
+      navigate('/');
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+
+
 
   return (
     <motion.div
@@ -92,7 +132,7 @@ export const Login = () => {
           animate="visible"
           className="w-full max-w-md"
         >
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <form onSubmit={handleLogin} className="bg-white rounded-2xl shadow-xl overflow-hidden">
             <div className="p-1 bg-gradient-to-r from-[#124A2F] to-[#1a6d45]"></div>
 
             <motion.div
@@ -108,6 +148,15 @@ export const Login = () => {
                 Sign In
               </motion.h2>
 
+              {error && (
+                <motion.div
+                  variants={itemVariants}
+                  className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm"
+                >
+                  {error}
+                </motion.div>
+              )}
+
               <motion.div variants={itemVariants} className="mb-6">
                 <label className="block text-gray-700 text-sm font-medium mb-2 flex items-center">
                   <FaUser className="mr-2 text-[#124A2F]" />
@@ -118,6 +167,9 @@ export const Login = () => {
                   type="email"
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#124A2F] transition-all"
                   placeholder="your@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
               </motion.div>
 
@@ -126,12 +178,24 @@ export const Login = () => {
                   <FaLock className="mr-2 text-[#124A2F]" />
                   Password
                 </label>
-                <motion.input
-                  whileFocus={{ scale: 1.02, boxShadow: "0 0 0 2px rgba(18, 74, 47, 0.5)" }}
-                  type="password"
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#124A2F] transition-all"
-                  placeholder="••••••••"
-                />
+                <div className="relative">
+                  <motion.input
+                    whileFocus={{ scale: 1.02, boxShadow: "0 0 0 2px rgba(18, 74, 47, 0.5)" }}
+                    type={showPassword ? "text" : "password"}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#124A2F] transition-all pr-10"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-[#124A2F]"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
               </motion.div>
 
               <motion.div variants={itemVariants} className="flex justify-end mb-6">
@@ -144,12 +208,14 @@ export const Login = () => {
               </motion.div>
 
               <motion.button
+                type="submit"
                 variants={itemVariants}
                 whileHover={{ scale: 1.02, boxShadow: "0 4px 12px rgba(18, 74, 47, 0.3)" }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full bg-gradient-to-r from-[#124A2F] to-[#1a6d45] text-white py-3 px-4 rounded-lg font-medium hover:shadow-lg transition-all"
+                className="w-full bg-gradient-to-r from-[#124A2F] to-[#1a6d45] text-white py-3 px-4 rounded-lg font-medium hover:shadow-lg transition-all disabled:opacity-70"
+                disabled={loading}
               >
-                Login
+                {loading ? 'Signing In...' : 'Login'}
               </motion.button>
 
               <motion.div variants={itemVariants} className="relative my-6">
@@ -168,8 +234,9 @@ export const Login = () => {
                 className="flex justify-center"
               >
                 <GoogleButton
-                  onClick={() => { console.log('Google button clicked') }}
+                  onClick={handleGoogleSignIn}
                   className="w-full flex justify-center"
+                  disabled={loading}
                 />
               </motion.div>
 
@@ -186,7 +253,7 @@ export const Login = () => {
                 </NavLink>
               </motion.div>
             </motion.div>
-          </div>
+          </form>
         </motion.div>
       </div>
     </motion.div>

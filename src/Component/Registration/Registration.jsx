@@ -1,15 +1,23 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import GoogleButton from 'react-google-button';
 import { motion } from 'framer-motion';
-import { FaUser, FaEnvelope, FaLock, FaUserPlus } from 'react-icons/fa';
-import { NavLink } from 'react-router-dom'; // Fixed import
+import { FaUser, FaEnvelope, FaLock, FaUserPlus, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../Provider/AuthContext';
 
 export const Registration = () => {
-  const { createUser,setUser } = useContext(AuthContext);
-
-
-
+  const { createUser, setUser, googleSignIn } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordRequirements, setPasswordRequirements] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    specialChar: false
+  });
 
   // Animation variants
   const containerVariants = {
@@ -49,6 +57,16 @@ export const Registration = () => {
     }
   };
 
+  const checkPasswordRequirements = (password) => {
+    setPasswordRequirements({
+      length: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /[0-9]/.test(password),
+      specialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+    });
+  };
+
   const handleRegister = (e) => {
     e.preventDefault();
     const form = e.target;
@@ -57,15 +75,46 @@ export const Registration = () => {
     const photoURL = form.url.value;
     const password = form.password.value;
     const confirmPass = form.confirmPass.value;
-    createUser(email, password).then((userCredential) => {
-      const user = userCredential.user;
-      setUser(user);
-    })
+
+    // Clear previous errors
+    setErrorMessage('');
+
+    // Basic password match validation
+    if (password !== confirmPass) {
+      setErrorMessage("Passwords don't match!");
+      return;
+    }
+
+    // Check if all password requirements are met
+    const allRequirementsMet = Object.values(passwordRequirements).every(Boolean);
+    if (!allRequirementsMet) {
+      setErrorMessage("Password doesn't meet all requirements");
+      return;
+    }
+
+    createUser(email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        setUser(user);
+        navigate('/login');
+      })
       .catch((error) => {
         const errorMessage = error.message;
-        console.log(errorMessage)
+        setErrorMessage(errorMessage);
       });
-  }
+  };
+
+  const handleGoogleSignIn = () => {
+    googleSignIn()
+      .then((result) => {
+        const user = result.user;
+        console.log(user,result);
+        navigate('/login');
+      })
+      .catch((error) => {
+        setErrorMessage(error.message);
+      });
+  };
 
   return (
     <motion.div
@@ -132,6 +181,18 @@ export const Registration = () => {
                 Register
               </motion.h2>
 
+              {/* Error message display */}
+              {errorMessage && (
+                <motion.div
+                  variants={itemVariants}
+                  className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                >
+                  {errorMessage}
+                </motion.div>
+              )}
+
               <motion.div variants={itemVariants} className="mb-4">
                 <label className="block text-gray-700 text-sm font-medium mb-2 flex items-center">
                   <FaUser className="mr-2 text-[#124A2F]" />
@@ -181,14 +242,44 @@ export const Registration = () => {
                   <FaLock className="mr-2 text-[#124A2F]" />
                   Password
                 </label>
-                <motion.input
-                  name="password"
-                  whileFocus={{ scale: 1.02, boxShadow: "0 0 0 2px rgba(18, 74, 47, 0.5)" }}
-                  type="password"
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#124A2F] transition-all"
-                  placeholder="••••••••"
-                  required
-                />
+                <div className="relative">
+                  <motion.input
+                    name="password"
+                    whileFocus={{ scale: 1.02, boxShadow: "0 0 0 2px rgba(18, 74, 47, 0.5)" }}
+                    type={showPassword ? "text" : "password"}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#124A2F] transition-all pr-10"
+                    placeholder="••••••••"
+                    required
+                    onChange={(e) => checkPasswordRequirements(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-[#124A2F]"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
+                <div className="mt-2 text-xs text-gray-600">
+                  <p>Password must contain:</p>
+                  <ul className="list-disc list-inside">
+                    <li className={passwordRequirements.length ? 'text-green-500' : 'text-gray-500'}>
+                      At least 8 characters
+                    </li>
+                    <li className={passwordRequirements.uppercase ? 'text-green-500' : 'text-gray-500'}>
+                      At least one uppercase letter
+                    </li>
+                    <li className={passwordRequirements.lowercase ? 'text-green-500' : 'text-gray-500'}>
+                      At least one lowercase letter
+                    </li>
+                    <li className={passwordRequirements.number ? 'text-green-500' : 'text-gray-500'}>
+                      At least one number
+                    </li>
+                    <li className={passwordRequirements.specialChar ? 'text-green-500' : 'text-gray-500'}>
+                      At least one special character
+                    </li>
+                  </ul>
+                </div>
               </motion.div>
 
               <motion.div variants={itemVariants} className="mb-4">
@@ -196,14 +287,23 @@ export const Registration = () => {
                   <FaLock className="mr-2 text-[#124A2F]" />
                   Confirm Password
                 </label>
-                <motion.input
-                  name="confirmPass"
-                  whileFocus={{ scale: 1.02, boxShadow: "0 0 0 2px rgba(18, 74, 47, 0.5)" }}
-                  type="password"
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#124A2F] transition-all"
-                  placeholder="••••••••"
-                  required
-                />
+                <div className="relative">
+                  <motion.input
+                    name="confirmPass"
+                    whileFocus={{ scale: 1.02, boxShadow: "0 0 0 2px rgba(18, 74, 47, 0.5)" }}
+                    type={showConfirmPassword ? "text" : "password"}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#124A2F] transition-all pr-10"
+                    placeholder="••••••••"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-[#124A2F]"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
               </motion.div>
 
               <motion.div variants={itemVariants} className="mb-6 flex items-center">
@@ -230,7 +330,7 @@ export const Registration = () => {
                 className="flex justify-center pt-[20px]"
               >
                 <GoogleButton
-                  onClick={() => { console.log('Google button clicked') }}
+                  onClick={handleGoogleSignIn}
                   className="w-full flex justify-center"
                 />
               </motion.div>
