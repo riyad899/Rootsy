@@ -7,6 +7,8 @@ import 'swiper/css/navigation';
 import 'swiper/css/effect-fade';
 import 'swiper/css/effect-creative';
 import { Navbar } from '../../Component/Navbar/Navbar';
+import GardenerCard from '../../Component/GardenerCard/GardenerCard';
+import GardenersGrid from '../../Component/BrowsGurdernes/GardenersGrid';
 
 const slide1Bg = 'https://images.unsplash.com/photo-1651827684507-12e7c6675ea3?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
 const slide2Bg = 'https://images.unsplash.com/photo-1516253593875-bd7ba052fbc5';
@@ -17,6 +19,7 @@ const StatsSection = () => {
   const yearsRef = useRef(null);
   const specialistsRef = useRef(null);
   const awardsRef = useRef(null);
+
 
   // Leaf SVG component
   const LeafDecoration = () => (
@@ -491,8 +494,9 @@ export const Home = () => {
       </Swiper>
 
       <StatsSection />
+       <GardenerCard></GardenerCard>
+       <GardenersGrid></GardenersGrid>
 
-   
     </div>
   )
 }

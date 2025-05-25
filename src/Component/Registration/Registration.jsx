@@ -69,15 +69,12 @@ export const Registration = () => {
     });
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     const form = e.target;
-    const name = form.name.value;
-    const email = form.email.value;
-    const photoURL = form.url.value;
-    const password = form.password.value;
-    const confirmPass = form.confirmPass.value;
-
+    const formData = new FormData(form);
+    const { email, password, confirmPass, ...userProfile } = Object.fromEntries(formData.entries());
+ 
     // Clear previous errors
     setErrorMessage('');
 
@@ -94,63 +91,109 @@ export const Registration = () => {
       return;
     }
 
-    createUser(email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        setUser(user);
-        toast.success('🎉 Successfully registered!', {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-        setTimeout(() => navigate('/login'), 1500);
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        setErrorMessage(errorMessage);
-        toast.error(`❌ Registration failed: ${errorMessage}`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+    try {
+      const userCredential = await createUser(email, password);
+      const completeProfile = {
+        ...userProfile,
+        email,
+        createdAt: new Date().toISOString(),
+        role: 'user',
+        status: 'active'
+      };
+
+      const response = await fetch('http://localhost:3000/users', {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await userCredential.user.getIdToken()}`
+        },
+        body: JSON.stringify(completeProfile)
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to save user profile');
+      }
+
+      const data = await response.json();
+      setUser(userCredential.user);
+
+      toast.success('🎉 Successfully registered!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      setTimeout(() => navigate('/login'), 1500);
+    } catch (error) {
+      setErrorMessage(error.message);
+      toast.error(`❌ Registration failed: ${error.message}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
   };
 
-  const handleGoogleSignIn = () => {
-    googleSignIn()
-      .then((result) => {
-        const user = result.user;
-        toast.success('🎉 Google registration successful!', {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-        setTimeout(() => navigate('/login'), 1500);
-      })
-      .catch((error) => {
-        setErrorMessage(error.message);
-        toast.error(`❌ Google registration failed: ${error.message}`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+  const handleGoogleSignIn = async () => {
+    try {
+      const result = await googleSignIn();
+      const user = result.user;
+
+      // Create user profile with Google data
+      const userProfile = {
+        name: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+        provider: 'google',
+        createdAt: new Date().toISOString(),
+        role: 'user',
+        status: 'active'
+      };
+
+      const response = await fetch('http://localhost:3000/api/users', {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await user.getIdToken()}`
+        },
+        body: JSON.stringify(userProfile)
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to save user profile');
+      }
+
+      toast.success('🎉 Google registration successful!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      setTimeout(() => navigate('/'), 1500);
+    } catch (error) {
+      setErrorMessage(error.message);
+      toast.error(`❌ Google registration failed: ${error.message}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
   };
 
   return (
@@ -219,7 +262,6 @@ export const Registration = () => {
                 Register
               </motion.h2>
 
-              {/* Error message display */}
               {errorMessage && (
                 <motion.div
                   variants={itemVariants}
@@ -267,11 +309,11 @@ export const Registration = () => {
                   Photo URL
                 </label>
                 <motion.input
-                  name="url"
+                  name="photoURL"
                   whileFocus={{ scale: 1.02, boxShadow: "0 0 0 2px rgba(18, 74, 47, 0.5)" }}
                   type="url"
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#124A2F] transition-all"
-                  placeholder="Photo URL"
+                  placeholder="https://example.com/photo.jpg"
                 />
               </motion.div>
 
@@ -352,7 +394,7 @@ export const Registration = () => {
               </motion.div>
 
               <motion.button
-                type='submit'
+                type="submit"
                 variants={itemVariants}
                 whileHover={{ scale: 1.02, boxShadow: "0 4px 12px rgba(18, 74, 47, 0.3)" }}
                 whileTap={{ scale: 0.98 }}
