@@ -9,6 +9,7 @@ import { Registration } from '../Component/Registration/Registration';
 import { ShareTips } from '../Component/ShareTips/ShareTips';
 import { Mytips } from '../Component/MyTips/Mytips';
 import GardenersGrid from '../Component/BrowsGurdernes/GardenersGrid';
+import { Alltips } from '../Component/AllTips/Alltips';
 
 export const router = createBrowserRouter([
     {
@@ -58,6 +59,13 @@ export const router = createBrowserRouter([
                 Component: GardenersGrid
 
             },
+            {
+                index: true,
+                path:"/tips",
+                Component: Alltips
+
+            },
+
 
         ]
     },
