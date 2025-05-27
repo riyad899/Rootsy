@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-
 import { FaHeart, FaRegHeart, FaArrowLeft } from 'react-icons/fa';
 import { AuthContext } from '../../Provider/AuthContext';
 
