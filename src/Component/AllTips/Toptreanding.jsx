@@ -28,9 +28,31 @@ export const Toptreanding = () => {
     fetchTips();
   }, []);
 
-  const handleSeeMore = (tipId) => {
+const handleSeeMore = async (tipId) => {
+  try {
+    // Navigate to the tip detail page first
     navigate(`/tips/${tipId}`);
-  };
+
+    // Then fetch the specific tip data if needed
+    const response = await fetch(`http://localhost:3000/tips/${tipId}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const tipData = await response.json();
+    console.log('Tip details:', tipData);
+
+    // You can now use this data in your detail page component
+    // Typically you would set this to state in your detail component
+    return tipData;
+
+  } catch (error) {
+    console.error("Error fetching tip details:", error);
+    // You might want to handle this error in your UI
+    throw error; // Re-throw if you want to handle it in the calling component
+  }
+};
 
   // Function to render difficulty badge with appropriate styling
   const renderDifficultyBadge = (difficulty) => {

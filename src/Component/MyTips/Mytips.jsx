@@ -42,10 +42,7 @@ export const Mytips = () => {
         }
     };
 
-    const handleCancelDelete = () => {
-        setShowDeleteModal(false);
-        setTipToDelete(null);
-    };
+  
 
     useEffect(() => {
         const fetchTips = async () => {

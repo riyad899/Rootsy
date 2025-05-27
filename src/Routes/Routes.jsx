@@ -1,72 +1,54 @@
 import React from 'react';
-
+import { createBrowserRouter } from 'react-router-dom'; // Note: Fixed import from 'react-router'
 import { Root } from '../Pages/Root/Root';
 import { Error } from '../Pages/ErrorPage/Error';
 import { Home } from '../Pages/Home/Home';
-import { createBrowserRouter } from 'react-router';
 import { Login } from '../Component/login/Login';
 import { Registration } from '../Component/Registration/Registration';
 import { ShareTips } from '../Component/ShareTips/ShareTips';
 import { Mytips } from '../Component/MyTips/Mytips';
 import GardenersGrid from '../Component/BrowsGurdernes/GardenersGrid';
 import { Alltips } from '../Component/AllTips/Alltips';
+import { SingleTip } from '../Component/MyTips/SingleTip';
 
 export const router = createBrowserRouter([
     {
         path: "/",
-        Component: Root,
+        element: <Root />, // Changed from Component to element
         errorElement: <Error />,
         children: [
             {
                 index: true,
-                path:"/",
-                Component: Home
-
+                element: <Home /> // Changed from Component to element
             },
             {
-                index: true,
-                path:"/",
-                Component: Home
-
-            },
-             {
-                index: true,
-                path:"/login",
-                Component: Login
-
-            },
-             {
-                index: true,
-                path:"/signup",
-                Component: Registration
-
-            },
-             {
-                index: true,
-                path:"/share-tip",
-                Component: ShareTips
-
-            },
-              {
-                index: true,
-                path:"/my-tips",
-                Component: Mytips
-
-            },
-              {
-                index: true,
-                path:"/explore",
-                Component: GardenersGrid
-
+                path: "/login",
+                element: <Login />
             },
             {
-                index: true,
-                path:"/tips",
-                Component: Alltips
-
+                path: "/signup",
+                element: <Registration />
             },
-
-
+            {
+                path: "/share-tip",
+                element: <ShareTips />
+            },
+            {
+                path: "/my-tips",
+                element: <Mytips />
+            },
+            {
+                path: "/explore",
+                element: <GardenersGrid />
+            },
+            {
+                path: "/tips",
+                element: <Alltips />
+            },
+            {
+                path: "/tips/:id", // Fixed the route parameter syntax
+                element: <SingleTip />
+            }
         ]
     },
 ]);

@@ -51,9 +51,26 @@ export const Alltips = () => {
     setFilteredTips(result);
   }, [difficultyFilter, categoryFilter, tips]);
 
-  const handleSeeMore = (tipId) => {
-    navigate(`/tips/${tipId}`);
-  };
+const handleSeeMore = async (tipId) => {
+      navigate(`/tips/${tipId}`);
+    try {
+        const response = await fetch('http://localhost:3000/tips');
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log(data);
+
+        // Find the specific tip by ID
+        const foundTip = data.find(tip => tip._id === tipId);
+
+
+    } catch (error) {
+        console.error("Error fetching tips:", error);
+    }
+};
+
 
   const renderDifficultyBadge = (difficulty) => {
     let bgColor = '';
