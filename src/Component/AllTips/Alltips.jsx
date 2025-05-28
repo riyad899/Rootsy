@@ -13,7 +13,7 @@ export const Alltips = () => {
   useEffect(() => {
     const fetchTips = async () => {
       try {
-        const response = await fetch('http://localhost:3000/tips');
+        const response = await fetch('https://backend-test-blush.vercel.app/tips');
         if (!response.ok) {
           throw new Error('Failed to fetch tips');
         }
@@ -54,7 +54,7 @@ export const Alltips = () => {
 const handleSeeMore = async (tipId) => {
       navigate(`/tips/${tipId}`);
     try {
-        const response = await fetch('http://localhost:3000/tips');
+        const response = await fetch('https://backend-test-blush.vercel.app/tips');
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }

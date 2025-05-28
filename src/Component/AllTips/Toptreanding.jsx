@@ -10,7 +10,7 @@ export const Toptreanding = () => {
   useEffect(() => {
     const fetchTips = async () => {
       try {
-        const response = await fetch('http://localhost:3000/tips');
+        const response = await fetch('https://backend-test-blush.vercel.app/tips');
         if (!response.ok) {
           throw new Error('Failed to fetch tips');
         }
@@ -34,7 +34,7 @@ const handleSeeMore = async (tipId) => {
     navigate(`/tips/${tipId}`);
 
     // Then fetch the specific tip data if needed
-    const response = await fetch(`http://localhost:3000/tips/${tipId}`);
+    const response = await fetch(`https://backend-test-blush.vercel.app/tips/${tipId}`);
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);

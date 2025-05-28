@@ -69,7 +69,7 @@ export const Mytips = () => {
 
         try {
             setIsUploading(true);
-            const response = await fetch(`http://localhost:3000/tips/${tipToUpdate}`, {
+            const response = await fetch(`https://backend-test-blush.vercel.app/tips/${tipToUpdate}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -94,7 +94,7 @@ export const Mytips = () => {
             setShowUpdateModal(false);
 
             // Refresh the tips list
-            const updatedResponse = await fetch('http://localhost:3000/tips');
+            const updatedResponse = await fetch('https://backend-test-blush.vercel.app/tips');
             const updatedData = await updatedResponse.json();
             const filteredTips = updatedData.filter(tip =>
                 tip.userEmail === user?.email?.toLowerCase()
@@ -183,7 +183,7 @@ export const Mytips = () => {
 
         try {
             setDeleteStatus({ success: null, message: 'Deleting...' });
-            const response = await fetch(`http://localhost:3000/tips/${tipToDelete}`, {
+            const response = await fetch(`https://backend-test-blush.vercel.app/tips/${tipToDelete}`, {
                 method: 'DELETE'
             });
 
@@ -233,7 +233,7 @@ export const Mytips = () => {
     useEffect(() => {
         const fetchTips = async () => {
             try {
-                const response = await fetch('http://localhost:3000/tips');
+                const response = await fetch('https://backend-test-blush.vercel.app/tips');
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }

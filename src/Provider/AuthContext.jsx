@@ -21,19 +21,19 @@ export const AuthProvider = ({ children }) => {
 
     }
 
+      
 
+     function googleLogin() {
+    return signInWithPopup(auth, GoogleAuthProvider)
+  }
 
-    const googleSignIn = () => {
-    const provider = new GoogleAuthProvider();
-    return signInWithPopup(auth, provider);
-    };
 
 
     const authData = {
         user,
         setUser,
         createUser,
-        googleSignIn,
+       googleLogin,
         logOut,
     };
 

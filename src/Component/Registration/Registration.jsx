@@ -74,7 +74,7 @@ export const Registration = () => {
     const form = e.target;
     const formData = new FormData(form);
     const { email, password, confirmPass, ...userProfile } = Object.fromEntries(formData.entries());
- 
+
     // Clear previous errors
     setErrorMessage('');
 
@@ -101,7 +101,7 @@ export const Registration = () => {
         status: 'active'
       };
 
-      const response = await fetch('http://localhost:3000/users', {
+      const response = await fetch('https://backend-test-blush.vercel.app/users', {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -158,7 +158,7 @@ export const Registration = () => {
         status: 'active'
       };
 
-      const response = await fetch('http://localhost:3000/api/users', {
+      const response = await fetch('https://backend-test-blush.vercel.app/api/users', {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

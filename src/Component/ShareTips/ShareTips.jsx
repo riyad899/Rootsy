@@ -36,7 +36,7 @@ export const ShareTips = () => {
       }
 
       try {
-        const response = await fetch("http://localhost:3000/users");
+        const response = await fetch("https://backend-test-blush.vercel.app/users");
         if (!response.ok) throw new Error('Failed to fetch user data');
 
         const data = await response.json();
@@ -210,7 +210,7 @@ export const ShareTips = () => {
       };
       console.log(tipData)
       // Make POST request to your backend API
-      const response = await fetch('http://localhost:3000/tips', {
+      const response = await fetch('https://backend-test-blush.vercel.app/tips', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

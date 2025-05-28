@@ -9,7 +9,7 @@ const GardenersGrid = () => {
   useEffect(() => {
     const fetchGardeners = async () => {
       try {
-        const response = await fetch('http://localhost:3000/users');
+        const response = await fetch('https://backend-test-blush.vercel.app/users');
 
         if (!response.ok) {
           throw new Error(`Server responded with ${response.status}`);

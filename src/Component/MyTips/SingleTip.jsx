@@ -16,7 +16,7 @@ export const SingleTip = () => {
   useEffect(() => {
     const fetchTip = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/tips/${id}`);
+        const response = await fetch(`https://backend-test-blush.vercel.app/tips/${id}`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -46,7 +46,7 @@ export const SingleTip = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3000/tips/${id}/like`, {
+      const response = await fetch(`https://backend-test-blush.vercel.app/tips/${id}/like`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

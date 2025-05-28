@@ -9,7 +9,7 @@ const GardenerCard = () => {
   useEffect(() => {
     const fetchGardeners = async () => {
       try {
-        const response = await fetch('http://localhost:3000/plants');
+        const response = await fetch('https://backend-test-blush.vercel.app/plants');
         if (!response.ok) {
           throw new Error('Failed to fetch gardeners');
         }
