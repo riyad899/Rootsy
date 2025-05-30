@@ -22,12 +22,6 @@ export const SingleTip = () => {
         }
         const data = await response.json();
         setTip(data);
-        setLikeCount(data.totalLiked || 0);
-
-        // Check if current user has liked this tip
-        if (user?.email && data.likedBy?.includes(user.email)) {
-          setIsLiked(true);
-        }
       } catch (err) {
         console.error('Error fetching tip:', err);
         setError(err.message);
@@ -37,34 +31,66 @@ export const SingleTip = () => {
     };
 
     fetchTip();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchLikes = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/like');
+        if (!response.ok) {
+          throw new Error('Failed to fetch likes');
+        }
+        const data = await response.json();
+
+        // Count likes for this tip
+        const tipLikes = data.filter(like => like.id === id);
+        setLikeCount(tipLikes.length);
+
+        // Check if current user has liked this tip
+        if (user) {
+          const userLike = data.find(like => like.id === id && like.email === user.email);
+          setIsLiked(!!userLike);
+        }
+      } catch (error) {
+        console.error('Error fetching likes:', error);
+      }
+    };
+
+    fetchLikes();
   }, [id, user?.email]);
 
-  const handleLike = async () => {
-    if (!user) {
-      navigate('/login');
-      return;
+  
+const handleLike = async () => {
+  if (!user) {
+    navigate('/login');
+    return;
+  }
+
+  try {
+    const endpoint = isLiked ? 'unlike' : 'like';
+    const response = await fetch(`http://localhost:3000/${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        id: id,
+        email: user.email
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to ${isLiked ? 'unlike' : 'like'}`);
     }
 
-    try {
-      const response = await fetch(`https://backend-test-blush.vercel.app/tips/${id}/like`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userEmail: user.email })
-      });
+    // Update like status and count
+    setIsLiked(!isLiked);
+    setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
 
-      if (!response.ok) {
-        throw new Error('Failed to update like');
-      }
-
-      const updatedTip = await response.json();
-      setLikeCount(updatedTip.totalLiked);
-      setIsLiked(!isLiked);
-    } catch (err) {
-      console.error('Error liking tip:', err);
-    }
-  };
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
 
   if (loading) return (
     <div className="flex justify-center items-center h-64">
