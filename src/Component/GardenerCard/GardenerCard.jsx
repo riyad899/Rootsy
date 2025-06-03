@@ -82,11 +82,7 @@ const GardenerCard = () => {
                   </div>
 
                   {/* Status Badge */}
-                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <span className="bg-[#18AA4E] text-white text-xs px-2 py-1 rounded-full font-medium">
-                      {gardener.status}
-                    </span>
-                  </div>
+                
                 </div>
 
                 {/* Name Label */}
