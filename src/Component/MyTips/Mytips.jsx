@@ -283,7 +283,7 @@ export const Mytips = () => {
 
             {/* Delete Confirmation Modal */}
             {showDeleteModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
                     <div className="bg-white rounded-lg p-6 max-w-md w-full">
                         <h3 className="text-xl font-semibold mb-4">Confirm Deletion</h3>
                         <p className="mb-6">Are you sure you want to delete this tip? This action cannot be undone.</p>
@@ -307,7 +307,7 @@ export const Mytips = () => {
 
             {/* Update Tip Modal */}
             {showUpdateModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
+                <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto">
                     <div className="bg-white rounded-xl shadow-md overflow-hidden p-6 sm:p-8 max-w-3xl w-full max-h-screen overflow-y-auto my-8">
                         <div className="text-center mb-8">
                             <h1 className="text-2xl sm:text-3xl font-bold text-green-700">Update Your Garden Tip</h1>

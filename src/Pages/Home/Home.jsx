@@ -10,9 +10,11 @@ import { Navbar } from '../../Component/Navbar/Navbar';
 import GardenerCard from '../../Component/GardenerCard/GardenerCard';
 import GardenersGrid from '../../Component/BrowsGurdernes/GardenersGrid';
 import { Toptreanding } from '../../Component/AllTips/Toptreanding';
+import InfoSection from '../../Component/StatsSection/InfoSection';
+// import{leaf} from '../../images/t.png';
 
-const slide1Bg = 'https://images.unsplash.com/photo-1651827684507-12e7c6675ea3?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
-const slide2Bg = 'https://images.unsplash.com/photo-1516253593875-bd7ba052fbc5';
+const slide1Bg = 'https://images.unsplash.com/photo-1651827684507-12e7c6675ea3?q=80&w=&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+const slide2Bg = 'https://images.unsplash.com/photo-1581578021450-fbd19fba0e63?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
 const slide3Bg = 'https://images.unsplash.com/photo-1523348837708-15d4a09cfac2';
 
 const StatsSection = () => {
@@ -72,48 +74,9 @@ const StatsSection = () => {
   }, []);
 
   return (
-    <div className="bg-white py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto">
-        {/* Main heading section */}
-        <div className="text-center mb-16 relative">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">We handle everything for you!</h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            We at the <span className="font-semibold text-green-700">Gawley</span> are proud of our carefully designed landscapes tailored to suit our commercial clients' preferences while providing sustainability.
-          </p>
+   
+        <InfoSection></InfoSection>
 
-        </div>
-
-        {/* Divider */}
-        <div className="border-t border-gray-200 my-12"></div>
-
-        {/* Stats section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-          {/* Years of Experience */}
-          <div className="text-center relative z-10">
-            <div ref={yearsRef} className="text-5xl font-bold text-green-700 mb-2">0</div>
-            <div className="text-xl font-semibold text-gray-800 uppercase tracking-wider mb-2">YEARS</div>
-            <div className="text-gray-600">Experience</div>
-            <p className="mt-2 text-gray-500">Delivering solutions for your garden.</p>
-          </div>
-
-          {/* Specialists */}
-          <div className="text-center relative z-10">
-            <div ref={specialistsRef} className="text-5xl font-bold text-green-700 mb-2">0</div>
-            <div className="text-xl font-semibold text-gray-800 uppercase tracking-wider mb-2">SPECIALISTS</div>
-            <div className="text-gray-600">In landscaping design</div>
-            <p className="mt-2 text-gray-500">We gather the best plants, creating the best specialist team.</p>
-          </div>
-
-          {/* Awards */}
-          <div className="text-center relative z-10">
-            <div ref={awardsRef} className="text-5xl font-bold text-green-700 mb-2">0</div>
-            <div className="text-xl font-semibold text-gray-800 uppercase tracking-wider mb-2">AWARDS</div>
-            <div className="text-gray-600">Winning Company</div>
-            <p className="mt-2 text-gray-500">Best garden design works for your inspiration.</p>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 };
 
@@ -354,7 +317,7 @@ export const Home = () => {
           }}
           navigation={true}
           modules={[Autoplay, Pagination, Navigation, EffectFade, EffectCreative]}
-          className="mySwiper h-[700px]"
+          className="mySwiper h-[600px]"
           effect="creative"
           speed={1200}
           creativeEffect={{
@@ -381,6 +344,7 @@ export const Home = () => {
                   style={{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${slide1Bg})` }}
               >
                   <div className="container mx-auto px-6 text-white slide-content">
+
                       <h2 className="text-4xl md:text-5xl font-bold mb-4">
                           Community <span className="text-green-300 highlight-pulse">Gardening</span> Day
                       </h2>

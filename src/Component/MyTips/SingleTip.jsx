@@ -59,7 +59,7 @@ export const SingleTip = () => {
     fetchLikes();
   }, [id, user?.email]);
 
-  
+
 const handleLike = async () => {
   if (!user) {
     navigate('/login');
@@ -67,9 +67,12 @@ const handleLike = async () => {
   }
 
   try {
+    // Determine if we're liking or unliking
     const endpoint = isLiked ? 'unlike' : 'like';
-    const response = await fetch(`http://localhost:3000/${endpoint}`, {
-      method: 'POST',
+    const method = isLiked ? 'DELETE' : 'POST';
+
+    const response = await fetch(`http://localhost:3000/like`, {
+      method: method,
       headers: {
         'Content-Type': 'application/json'
       },
@@ -83,12 +86,44 @@ const handleLike = async () => {
       throw new Error(`Failed to ${isLiked ? 'unlike' : 'like'}`);
     }
 
-    // Update like status and count
+    // Update UI immediately
     setIsLiked(!isLiked);
     setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
 
   } catch (error) {
     console.error('Error:', error);
+  }
+};
+
+// Separate function specifically for deleting a like
+const deleteLike = async () => {
+  if (!user) {
+    navigate('/login');
+    return;
+  }
+
+  try {
+    const response = await fetch(`http://localhost:3000/like`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        id: id,
+        email: user.email
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete like');
+    }
+
+    // Update UI
+    setIsLiked(false);
+    setLikeCount(prev => prev - 1);
+
+  } catch (error) {
+    console.error('Error deleting like:', error);
   }
 };
 

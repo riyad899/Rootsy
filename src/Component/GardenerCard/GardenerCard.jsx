@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 
 const GardenerCard = () => {
   const [gardeners, setGardeners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedGardener, setSelectedGardener] = useState(null);
 
   useEffect(() => {
     const fetchGardeners = async () => {
@@ -32,142 +32,166 @@ const GardenerCard = () => {
   );
 
   if (error) return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="p-4 text-red-500 text-center"
-    >
+    <div className="p-4 text-red-500 text-center">
       Error: {error}
-    </motion.div>
+    </div>
   );
 
+  const duplicatedGardeners = [...gardeners, ...gardeners];
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header Section */}
-      <motion.div
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="text-center mb-12"
-      >
-        <h1 className="text-4xl font-bold text-gray-800 mb-3">Active Gardeners</h1>
+    <div className="w-full py-16 overflow-hidden">
+      {/* Header */}
+      <div className="text-center mb-12 px-4">
+        <h1 className="text-5xl font-bold text-[#13a147] mb-4">
+          Meet Our Expert Gardeners
+        </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Our passionate team of gardening experts is ready to help you cultivate your dream garden.
-          Each with unique specialties and years of experience to guide your gardening journey.
+          Discover our passionate team of gardening professionals
         </p>
-      </motion.div>
-
-      {/* Gardeners Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {gardeners.map((gardener, index) => (
-          <motion.div
-            key={gardener._id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.5,
-              delay: index * 0.1
-            }}
-            whileHover={{ y: -5 }}
-            className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300"
-          >
-            {/* Gardener Image with Parallax Effect */}
-            <div className="relative h-48 overflow-hidden">
-              <motion.img
-                src={gardener.photoUrl}
-                alt={gardener.name}
-                className="w-full h-full object-cover"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.3 }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent p-4 flex flex-col justify-end">
-                <h3 className="text-xl font-bold text-white">{gardener.name}</h3>
-                <p className="text-white/90">{gardener.location}</p>
-              </div>
-            </div>
-
-            {/* Gardener Details */}
-            <div className="p-5">
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <motion.span
-                    whileHover={{ scale: 1.05 }}
-                    className="inline-block bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full font-medium"
-                  >
-                    {gardener.status}
-                  </motion.span>
-                  <p className="text-gray-500 text-sm mt-2">{gardener.specialty}</p>
-                </div>
-                <div className="flex items-center">
-                  <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                  <span className="ml-1 text-gray-800 font-medium">{gardener.rating}</span>
-                </div>
-              </div>
-
-              <div className="flex justify-between text-sm text-gray-600 mb-4">
-                <div>
-                  <p className="font-medium">Experience</p>
-                  <p>{gardener.experience} years</p>
-                </div>
-                <div className="text-right">
-                  <p className="font-medium">Member since</p>
-                  <p>{new Date(gardener.createdAt).toLocaleDateString()}</p>
-                </div>
-              </div>
-
-              <motion.button
-                whileHover={{
-                  scale: 1.02,
-                  boxShadow: "0 4px 12px rgba(22, 163, 74, 0.3)"
-                }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white py-2 px-4 rounded-lg transition-all duration-200"
-              >
-                View Profile
-              </motion.button>
-            </div>
-          </motion.div>
-        ))}
       </div>
 
-      {/* Activities Section */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        viewport={{ once: true }}
-        className="mt-16 bg-green-50 rounded-xl p-8 text-center"
-      >
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Our Gardeners' Activities</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <motion.div
-            whileHover={{ y: -5 }}
-            className="bg-white p-6 rounded-lg shadow-md"
-          >
-            <div className="text-green-600 text-4xl mb-3">🌱</div>
-            <h3 className="font-semibold text-lg mb-2">Planting Workshops</h3>
-            <p className="text-gray-600">Learn the best techniques from our experts</p>
-          </motion.div>
-          <motion.div
-            whileHover={{ y: -5 }}
-            className="bg-white p-6 rounded-lg shadow-md"
-          >
-            <div className="text-green-600 text-4xl mb-3">✂️</div>
-            <h3 className="font-semibold text-lg mb-2">Pruning Sessions</h3>
-            <p className="text-gray-600">Keep your plants healthy and thriving</p>
-          </motion.div>
-          <motion.div
-            whileHover={{ y: -5 }}
-            className="bg-white p-6 rounded-lg shadow-md"
-          >
-            <div className="text-green-600 text-4xl mb-3">🌿</div>
-            <h3 className="font-semibold text-lg mb-2">Organic Care</h3>
-            <p className="text-gray-600">Sustainable gardening practices</p>
-          </motion.div>
+      {/* Marquee Container */}
+      <div className="relative">
+        <div className="flex animate-marquee hover:pause-marquee">
+          {duplicatedGardeners.map((gardener, index) => (
+            <div
+              key={`${gardener._id}-${index}`}
+              className="flex-shrink-0 mx-4 group cursor-pointer"
+            >
+              <div className="relative w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48">
+                {/* Avatar Container */}
+                <div
+                  className="relative w-full h-full rounded-full overflow-hidden border-4 border-white shadow-xl group-hover:shadow-2xl transition-all duration-500 group-hover:scale-110"
+                  onClick={() => setSelectedGardener(gardener)}
+                >
+                  <img
+                    src={gardener.photoUrl}
+                    alt={gardener.name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full"></div>
+
+                  {/* Centered View Profile Button */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="bg-white text-[#18AA4E] px-4 py-2 rounded-full font-semibold text-sm shadow-lg hover:scale-105 transition-transform duration-200">
+                      View Profile
+                    </div>
+                  </div>
+
+                  {/* Status Badge */}
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="bg-[#18AA4E] text-white text-xs px-2 py-1 rounded-full font-medium">
+                      {gardener.status}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Name Label */}
+                <div className="text-center mt-3">
+                  <h3 className="font-bold text-gray-800 text-sm md:text-base group-hover:text-[#18AA4E] transition-colors">
+                    {gardener.name}
+                  </h3>
+                  <p className="text-gray-500 text-xs md:text-sm">
+                    {gardener.location}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
-      </motion.div>
+      </div>
+
+      {/* Detail Modal */}
+      {selectedGardener && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl transform animate-modal-enter">
+            {/* Modal Header */}
+            <div className="relative h-48 overflow-hidden rounded-t-2xl">
+              <img
+                src={selectedGardener.photoUrl}
+                alt={selectedGardener.name}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+              <button
+                onClick={() => setSelectedGardener(null)}
+                className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/30 transition-colors"
+              >
+                ✕
+              </button>
+              <div className="absolute bottom-4 left-4">
+                <h2 className="text-2xl font-bold text-white">{selectedGardener.name}</h2>
+                <p className="text-white/90">{selectedGardener.location}</p>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                  {selectedGardener.status}
+                </span>
+                <div className="flex items-center">
+                  <span className="text-yellow-400 text-lg">★</span>
+                  <span className="ml-1 font-semibold">{selectedGardener.rating}</span>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-semibold text-gray-800 mb-1">Specialty</h3>
+                  <p className="text-gray-600">{selectedGardener.specialty}</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h3 className="font-semibold text-gray-800 mb-1">Experience</h3>
+                    <p className="text-gray-600">{selectedGardener.experience} years</p>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-800 mb-1">Member Since</h3>
+                    <p className="text-gray-600">{new Date(selectedGardener.createdAt).toLocaleDateString()}</p>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setSelectedGardener(null)}
+                className="w-full mt-6 bg-gradient-to-r from-green-600 to-blue-600 text-white py-3 rounded-xl font-semibold hover:from-green-700 hover:to-blue-700 transition-all duration-200 transform hover:scale-105"
+              >
+                Contact Gardener
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+
+        @keyframes modal-enter {
+          0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+          100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .animate-marquee {
+          animation: marquee 30s linear infinite;
+        }
+
+        .pause-marquee {
+          animation-play-state: paused;
+        }
+
+        .animate-modal-enter {
+          animation: modal-enter 0.3s ease-out;
+        }
+      `}</style>
     </div>
   );
 };
