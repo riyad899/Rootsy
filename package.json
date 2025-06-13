@@ -17,6 +17,7 @@
     "dotenv": "^16.5.0",
     "firebase": "^11.8.0",
     "framer-motion": "^12.12.1",
+    "lucide-react": "^0.513.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-fast-marquee": "^1.6.5",
