@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { AuthContext } from '../../Provider/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import CopilotChat from '../CopilotChat.jsx/CopilotChat';
+import '@copilotkit/react-ui/styles.css';
 
 export const ShareTips = () => {
   const { user } = useContext(AuthContext);
@@ -479,6 +481,9 @@ export const ShareTips = () => {
             </button>
           </div>
         </form>
+      </div>
+      <div className='mt-8 max-w-3xl mx-auto z-1000'>
+        <CopilotChat className="bg-amber-800"></CopilotChat>
       </div>
     </div>
   );

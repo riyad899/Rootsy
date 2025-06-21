@@ -4,60 +4,59 @@ const About = () => {
   const timelineData = [
     {
       year: "1987",
-      description: "Gardenly established in 1987, is an American landscape company based in NY City"
+      title: "Founding Roots",
+      description: "Established in New York with a vision to blend nature and urban living through thoughtful design"
     },
     {
       year: "2005",
-      description: "Gardenly established in 1987, is an American landscape company based in NY City"
+      title: "National Recognition",
+      description: "Featured in Architectural Digest for our innovative rooftop garden designs"
     },
     {
       year: "2017",
-      description: "Gardenly established in 1987, is an American landscape company based in NY City"
+      title: "Sustainability Focus",
+      description: "Pioneered water-wise landscaping techniques now adopted industry-wide"
     }
   ];
 
   return (
-    <div
-      className="min-h-screen py-16 px-4"
-
-    >
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen py-24 px-4 bg-white">
+      <div className="max-w-6xl mx-auto">
         {/* Header Section */}
-        <div className="grid lg:grid-cols-2 gap-12 items-start mb-16">
+        <div className="grid lg:grid-cols-2 gap-20 items-start mb-24">
           {/* Left side - About Text */}
-          <div className="space-y-8">
-            {/* Decorative leaf element */}
+          <div className="space-y-12">
             <div className="relative">
-              <div className="absolute -top-4 -left-8 text-6xl opacity-20 animate-float">🌿</div>
-              <h1 className="text-5xl lg:text-6xl font-light text-green-800 mb-6 relative z-10">
-                About us
+              <h1 className="text-4xl lg:text-5xl font-light text-gray-900 mb-6 tracking-tight">
+                <span className="font-serif italic text-[#1a3a27]">About</span> Gardenly
               </h1>
+              <div className="w-20 h-px bg-gray-300 mb-8"></div>
             </div>
 
-            <p className="text-lg text-gray-600 leading-relaxed max-w-md">
-              Gardenly offers a full-service garden design to clients.
+            <p className="text-lg text-gray-600 leading-relaxed max-w-md font-light">
+              We create living art that evolves with the seasons, combining horticultural expertise with architectural vision.
             </p>
 
             {/* Timeline Section */}
-            <div className="space-y-8 mt-12">
-              <h2 className="text-2xl font-semibold text-[#00A844] mb-6">Since 1987!</h2>
+            <div className="space-y-12 mt-16">
+              <h2 className="text-xl font-normal text-gray-500 tracking-widest mb-8">OUR JOURNEY</h2>
 
               <div className="relative">
                 {/* Timeline line */}
-                <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#00A844] to-transparent opacity-30"></div>
+                <div className="absolute left-5 top-0 bottom-0 w-px bg-gray-200"></div>
 
                 {timelineData.map((item, index) => (
-                  <div key={item.year} className="relative flex items-start space-x-6 mb-8">
+                  <div key={item.year} className="relative flex items-start space-x-8 mb-12 last:mb-0">
                     {/* Timeline dot */}
-                    <div className="flex-shrink-0 w-12 h-12 rounded-full border-4 border-white shadow-lg flex items-center justify-center relative z-10"
-                         style={{background: 'linear-gradient(135deg, #EBFDF0 0%, #00A844 100%)'}}>
-                      <div className="w-3 h-3 rounded-full bg-white"></div>
+                    <div className="flex-shrink-0 w-10 h-10 rounded-full border border-gray-300 bg-white flex items-center justify-center relative z-10">
+                      <div className="w-2 h-2 rounded-full bg-[#1a3a27]"></div>
                     </div>
 
                     {/* Content */}
-                    <div className="flex-1 pt-2">
-                      <div className="text-2xl font-bold text-[#00A844] mb-2">{item.year}</div>
-                      <p className="text-gray-600 text-sm leading-relaxed max-w-xs">
+                    <div className="flex-1 pt-1">
+                      <div className="text-xs font-medium text-gray-500 tracking-widest mb-1">{item.year}</div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">{item.title}</h3>
+                      <p className="text-gray-500 text-sm leading-relaxed max-w-xs font-light">
                         {item.description}
                       </p>
                     </div>
@@ -68,80 +67,46 @@ const About = () => {
           </div>
 
           {/* Right side - Team Image and Craftsmanship */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {/* Team Image */}
-            <div className="relative group">
-              <div className="absolute -top-4 -right-4 text-4xl opacity-30 animate-float animation-delay-400">🍃</div>
-              <div className="relative overflow-hidden rounded-2xl shadow-2xl transform group-hover:scale-105 transition-transform duration-500">
+            <div className="relative">
+              <div className="relative overflow-hidden rounded-sm shadow-sm aspect-[4/3]">
                 <img
                   src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&h=400&fit=crop"
-                  alt="Garden team working together"
-                  className="w-full h-64 object-cover"
+                  alt="Gardenly team"
+                  className="w-full h-full object-cover"
                 />
-                {/* Gradient overlay */}
-                <div
-                  className="absolute inset-0 opacity-20"
-                  style={{background: 'linear-gradient(135deg, rgba(235,253,240,0.3) 0%, rgba(0,168,68,0.2) 100%)'}}
-                ></div>
+                <div className="absolute inset-0 bg-black/10"></div>
               </div>
             </div>
 
             {/* Craftsmanship Card */}
-            <div
-              className="rounded-2xl p-8 text-white shadow-2xl transform hover:scale-105 transition-all duration-500 relative overflow-hidden"
-              style={{background: 'linear-gradient(135deg, #00A844 0%, #108c3d 50%, #0F7B35 100%)'}}
-            >
-              {/* Floating elements */}
-              <div className="absolute top-4 right-4 text-3xl opacity-30">🌱</div>
-              <div className="absolute bottom-4 left-4 text-2xl opacity-20">🌿</div>
-
-              {/* Icon */}
-              <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6 mx-auto">
-                <div className="text-3xl">🛠️</div>
+            <div className="border border-gray-200 p-8 bg-white">
+              <div className="flex items-center mb-6">
+                <div className="w-12 h-px bg-[#1a3a27] mr-4"></div>
+                <h3 className="text-sm font-medium text-gray-500 tracking-widest">PHILOSOPHY</h3>
               </div>
 
-              <h3 className="text-2xl font-bold text-center mb-4">Craftsmanship</h3>
+              <h3 className="text-2xl font-light text-gray-900 mb-6 font-serif italic">"Precision meets nature"</h3>
 
-              <p className="text-white/90 text-center leading-relaxed mb-6">
-                We at The Gardenly are proud to offer carefully designed landscapes crafted to suit our commercial clients preferences, while prioritizing sustainability.
+              <p className="text-gray-500 text-sm leading-relaxed mb-8 font-light">
+                Our approach combines meticulous attention to detail with deep respect for natural systems, creating spaces that are both beautiful and ecologically responsible.
               </p>
 
-              <div className="text-center">
-                <button className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-full font-semibold hover:bg-white/30 transition-all duration-300 transform hover:scale-105 border border-white/30">
-                  How we work
+              <div className="flex">
+                <button className="border border-[#1a3a27] text-[#1a3a27] px-6 py-3 text-sm tracking-wider hover:bg-[#1a3a27] hover:text-white transition-colors duration-300">
+                  OUR PROCESS
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-
-
-        {/* Floating background elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-32 right-20 text-4xl opacity-10 animate-float">🦋</div>
-          <div className="absolute bottom-32 left-16 text-3xl opacity-10 animate-float animation-delay-800">🌺</div>
-          <div className="absolute top-1/2 left-1/4 text-2xl opacity-10 animate-float animation-delay-1000">🌸</div>
+        {/* Signature */}
+        <div className="mt-24 border-t border-gray-100 pt-12">
+          <div className="text-gray-400 text-sm">Gardenly Landscapes • Established 1987</div>
         </div>
       </div>
-
-      {/* Custom CSS for animations */}
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          33% { transform: translateY(-8px) rotate(1deg); }
-          66% { transform: translateY(-4px) rotate(-1deg); }
-        }
-
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-
-        .animation-delay-400 { animation-delay: 400ms; }
-        .animation-delay-600 { animation-delay: 600ms; }
-        .animation-delay-800 { animation-delay: 800ms; }
-        .animation-delay-1000 { animation-delay: 1000ms; }
-      `}</style>
     </div>
   );
 };

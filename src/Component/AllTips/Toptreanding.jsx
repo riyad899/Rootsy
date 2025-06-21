@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 export const Toptreanding = () => {
   const [tips, setTips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeCategory, setActiveCategory] = useState('All');
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTips = async () => {
@@ -33,7 +31,9 @@ export const Toptreanding = () => {
   }, []);
 
   const handleViewPost = (postId) => {
-    navigate(`/posts/${postId}`);
+    // Handle navigation to post details
+    console.log('Navigating to post:', postId);
+    // You can implement your navigation logic here
   };
 
   const categories = ['All', 'Gardens', 'Interiors', 'Maintaince', 'Urban', ...new Set(tips.map(tip => tip.category))];
@@ -42,22 +42,12 @@ export const Toptreanding = () => {
     ? tips
     : tips.filter(tip => tip.category === activeCategory);
 
-  // Enhanced loading animation with gardening theme
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center" style={{background: 'linear-gradient(135deg, #EBFDF0 0%, #E0F7FA 50%, #F1F8E9 100%)'}}>
+      <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-slate-50 to-gray-100">
         <div className="text-center">
-          <div className="relative">
-            {/* Animated plant growing */}
-            <div className="animate-bounce">
-              <div className="text-6xl mb-4">🌱</div>
-            </div>
-            {/* Floating particles */}
-            <div className="absolute -top-4 -left-4 w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
-            <div className="absolute -top-2 -right-6 w-1 h-1 bg-emerald-400 rounded-full animate-ping animation-delay-200"></div>
-            <div className="absolute -bottom-2 -left-2 w-1.5 h-1.5 bg-teal-400 rounded-full animate-ping animation-delay-400"></div>
-          </div>
-          <p className="text-[#00A844] font-medium animate-pulse">Growing your garden...</p>
+          <div className="w-12 h-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-gray-600 font-medium">Loading tips...</p>
         </div>
       </div>
     );
@@ -65,220 +55,147 @@ export const Toptreanding = () => {
 
   if (error) {
     return (
-     <strong className="font-semibold">Oops! Something wilted</strong>
+      <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-slate-50 to-gray-100">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <p className="text-gray-600 font-medium">Something went wrong</p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden" >
-      {/* Floating background elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 text-7xl opacity-100 animate-float">🌿</div>
-        <div className="absolute top-40 right-20 text-7xl opacity-100 animate-float animation-delay-200">🍃</div>
-        <div className="absolute bottom-40 left-20 text-5xl opacity-30 animate-float animation-delay-400">🌺</div>
-        <div className="absolute bottom-20 right-10 text-5xl opacity-30 animate-float animation-delay-600">🦋</div>
-        <div className="absolute top-60 left-1/2 text-2xl opacity-30 animate-float animation-delay-800">🌸</div>
+    <div className='mx-10'>
+
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
+      {/* Header Section */}
+      <div className="py-16 px-4 text-center">
+        <h1 className="text-5xl font-bold text-[#1AB052] mb-4 tracking-tight">
+          Top Trending Tips
+        </h1>
+        <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+          Discover curated gardening insights and professional landscaping advice
+        </p>
       </div>
 
-      {/* Header Section with enhanced animations */}
-      <div className="py-16 px-4 text-center relative">
-        <div className="relative inline-block">
-          <h1 className="text-6xl font-light text-green-700 mb-6 relative z-10 animate-fade-in-up">
-            Top Treanding Tips
-          </h1>
-          {/* Decorative elements around title */}
-          <div className="absolute -top-2 -left-4 text-2xl animate-bounce animation-delay-300">🌱</div>
-          <div className="absolute -top-2 -right-4 text-2xl animate-bounce animation-delay-500">🌱</div>
-        </div>
-
-        <p className="text-gray-600 mb-8 animate-fade-in-up animation-delay-200">
-          Discover beautiful gardening projects and nature-inspired designs
-        </p>
-
-        {/* Enhanced Category Filter */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {categories.map((category, index) => (
+      {/* Category Filter */}
+      <div className="px-4 mb-12">
+        <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
+          {categories.map((category) => (
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`px-6 py-3 text-sm font-medium rounded-full transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 relative overflow-hidden group animate-fade-in-up ${
+              className={`px-6 py-3 rounded-full font-medium transition-all duration-300 border ${
                 activeCategory === category
-                  ? 'bg-[#00A844] text-white shadow-lg shadow-[#00A844]/20'
-                  : 'bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-[#00A844]/10 hover:text-[#00A844] border border-gray-200 hover:border-[#00A844]/30'
+                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-600/25'
+                  : 'bg-white text-gray-700 border-gray-200 hover:border-emerald-300 hover:text-emerald-700 hover:bg-emerald-50'
               }`}
-              style={{ animationDelay: `${index * 100}ms` }}
             >
-              <span className="relative z-10">{category}</span>
-              {activeCategory === category && (
-                <div className="absolute inset-0 bg-[#00A844] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              )}
+              {category}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Enhanced Projects Grid */}
-      <div className="px-6 pb-20 max-w-5xl mx-auto">
+      {/* Tips Grid */}
+      <div className="px-6 pb-20 max-w-7xl mx-auto">
         {filteredTips.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTips.map((tip, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {filteredTips.map((tip) => (
               <div
                 key={tip._id}
-                className="relative group overflow-hidden rounded-2xl bg-white/80 backdrop-blur-sm shadow-md hover:shadow-xl transition-all duration-700 transform hover:scale-[1.05] hover:-translate-y-1 animate-fade-in-up border border-gray-100"
-                style={{
-                  animationDelay: `${index * 100}ms`,
-                  background: 'linear-gradient(145deg, rgba(255,255,255,0.9) 0%, rgba(235,253,240,0.6) 50%, rgba(255,255,255,0.8) 100%)'
-                }}
+                className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden border border-gray-100"
               >
-                {/* Project Image with enhanced effects */}
-                <div className="aspect-square overflow-hidden rounded-t-2xl relative">
+                {/* Image Container */}
+                <div className="aspect-[4/3] overflow-hidden rounded-t-2xl relative cursor-pointer"
+                     onClick={() => handleViewPost(tip._id)}>
                   <img
-                    src={tip.imageUrl || 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=800&fit=crop'}
+                    src={tip.imageUrl || 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=600&fit=crop'}
                     alt={tip.title}
-                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
-                  {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-                  {/* Floating elements on hover */}
-                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0">
-                    <div className="bg-white/90 backdrop-blur-sm rounded-full p-1 shadow-md">
-                      <span className="text-sm">🌿</span>
-                    </div>
+                  {/* Overlay with View Button */}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
+                    <button
+                      className="bg-white text-gray-800 px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewPost(tip._id);
+                      }}
+                    >
+                      View Tips
+                    </button>
                   </div>
                 </div>
 
-                {/* Enhanced Overlay Content */}
-                <div
-                  className="absolute inset-0 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-center p-3 text-center rounded-2xl"
-                  style={{background: 'linear-gradient(135deg, rgba(235,253,240,0.95) 0%, rgba(255,255,255,0.90) 50%, rgba(232,245,232,0.95) 100%)'}}
-                >
-                  {/* Decorative top element */}
-                  <div className="absolute top-2 left-1/2 transform -translate-x-1/2 flex space-x-0.5 opacity-60">
-                    <div className="w-0.5 h-0.5 bg-[#00A844] rounded-full animate-pulse"></div>
-                    <div className="w-0.5 h-0.5 bg-[#00A844] rounded-full animate-pulse animation-delay-200"></div>
-                    <div className="w-0.5 h-0.5 bg-[#00A844] rounded-full animate-pulse animation-delay-400"></div>
+                {/* Content */}
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    {tip.category && (
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                        {tip.category}
+                      </span>
+                    )}
+                    {tip.difficulty && (
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                        tip.difficulty.toLowerCase() === 'easy'
+                          ? 'bg-green-100 text-green-800'
+                          : tip.difficulty.toLowerCase() === 'medium'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : tip.difficulty.toLowerCase() === 'hard'
+                          ? 'bg-red-100 text-red-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {tip.difficulty}
+                      </span>
+                    )}
                   </div>
 
-                  {/* Title with animation */}
-                  <h3 className="text-gray-800 text-sm font-bold mb-2 line-clamp-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500 animation-delay-100">
+                  <h3 className="font-bold text-gray-800 text-lg mb-2 line-clamp-2 leading-tight">
                     {tip.title}
                   </h3>
 
-                  {/* Description */}
-                  <p className="text-gray-600 text-xs mb-2 line-clamp-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500 animation-delay-200">
-                    {tip.description || 'Discover the beauty of nature through this amazing gardening project.'}
-                  </p>
+                  {tip.description && (
+                    <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                      {tip.description}
+                    </p>
+                  )}
 
-                  {/* Compact Badges */}
-                  <div className="flex flex-col gap-1 mb-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500 animation-delay-300">
-                    {tip.category && (
-                      <div className="bg-[#00A844]/10 text-[#00A844] text-xs px-2 py-0.5 rounded-full font-medium shadow-sm border border-[#00A844]/20">
-                        🌱 {tip.category}
-                      </div>
-                    )}
-
-                    {tip.difficulty && (
-                      <div className={`text-xs px-2 py-0.5 rounded-full font-medium shadow-sm border transform hover:scale-105 transition-transform duration-300 ${
-                        tip.difficulty.toLowerCase() === 'easy'
-                          ? 'bg-gradient-to-r from-green-100 to-green-200 text-green-800 border-green-200'
-                          : tip.difficulty.toLowerCase() === 'medium'
-                          ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 border-yellow-200'
-                          : tip.difficulty.toLowerCase() === 'hard'
-                          ? 'bg-gradient-to-r from-red-100 to-red-200 text-red-800 border-red-200'
-                          : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 border-gray-200'
-                      }`}>
-                        {tip.difficulty.toLowerCase() === 'easy' ? '🟢' :
-                         tip.difficulty.toLowerCase() === 'medium' ? '🟡' :
-                         tip.difficulty.toLowerCase() === 'hard' ? '🔴' : '⚪'} {tip.difficulty}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Compact Button */}
-                  <button
-                    onClick={() => handleViewPost(tip._id)}
-                    className="bg-[#00A844] hover:bg-[#008A3A]  text-white text-xs px-3 py-1.5 rounded-full shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 mb-2 w-[100px] h-[30px] group/btn relative overflow-hidden"
-                  >
-                    <span className="relative z-10 flex left-[10px] items-center">
-                      <span className="mr-1 text-xs">🌿</span>
-                      View
-                    </span>
-                    <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover/btn:scale-x-100 transition-transform duration-500 origin-left"></div>
-                  </button>
-
-                  {/* Compact Location */}
-                  <div className="text-gray-500 text-xs flex items-center transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500 animation-delay-500">
-                    <span className="mr-1 text-xs">📍</span>
-                    <span className="truncate">{tip.location || 'Garden'}</span>
-                  </div>
-
-                  {/* Decorative bottom element */}
-                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
-                    <div className="w-6 h-0.5 bg-gradient-to-r from-transparent via-[#00A844] to-transparent rounded-full"></div>
-                  </div>
+                  {tip.location && (
+                    <div className="flex items-center text-gray-500 text-sm">
+                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span className="truncate">{tip.location}</span>
+                    </div>
+                  )}
                 </div>
-
-                {/* Corner decoration */}
-                <div className="absolute top-0 right-0 w-0 h-0 border-l-[20px] border-l-transparent border-t-[20px] border-t-[#00A844]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-20 animate-fade-in">
-            <div className="text-6xl mb-4 animate-bounce">🌱</div>
-            <h3 className="text-2xl font-semibold text-gray-700 mb-3">No gardens to explore yet</h3>
+          <div className="text-center py-20">
+            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+              <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h3 className="text-2xl font-semibold text-gray-700 mb-3">No Tips Available</h3>
             <p className="text-gray-500 max-w-md mx-auto">
-              Your garden is waiting to bloom. Check back soon for fresh projects and inspiration!
+              No tips found for the selected category. Try selecting a different category or check back later.
             </p>
           </div>
         )}
       </div>
 
-      {/* Custom CSS for animations */}
+      {/* Custom CSS */}
       <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          33% { transform: translateY(-10px) rotate(1deg); }
-          66% { transform: translateY(-5px) rotate(-1deg); }
-        }
-
-        @keyframes fade-in-up {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-
-        .animate-fade-in-up {
-          animation: fade-in-up 0.8s ease-out forwards;
-        }
-
-        .animate-fade-in {
-          animation: fade-in 0.6s ease-out forwards;
-        }
-
-        .animation-delay-100 { animation-delay: 100ms; }
-        .animation-delay-200 { animation-delay: 200ms; }
-        .animation-delay-300 { animation-delay: 300ms; }
-        .animation-delay-400 { animation-delay: 400ms; }
-        .animation-delay-500 { animation-delay: 500ms; }
-        .animation-delay-600 { animation-delay: 600ms; }
-        .animation-delay-800 { animation-delay: 800ms; }
-
         .line-clamp-2 {
           display: -webkit-box;
           -webkit-line-clamp: 2;
@@ -293,6 +210,7 @@ export const Toptreanding = () => {
           overflow: hidden;
         }
       `}</style>
+    </div>
     </div>
   );
 };

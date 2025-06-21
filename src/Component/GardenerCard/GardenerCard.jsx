@@ -43,9 +43,10 @@ const GardenerCard = () => {
     <div className="w-full py-16 overflow-hidden">
       {/* Header */}
       <div className="text-center mb-12 px-4">
-        <h1 className="text-5xl font-bold text-[#13a147] mb-4">
-          Meet Our Expert Gardeners
-        </h1>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 bg-gradient-to-r from-green-700 to-green-500 bg-clip-text text-transparent">
+                      Meet Our Expert Gardeners
+
+          </h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           Discover our passionate team of gardening professionals
         </p>
@@ -82,7 +83,7 @@ const GardenerCard = () => {
                   </div>
 
                   {/* Status Badge */}
-                
+
                 </div>
 
                 {/* Name Label */}

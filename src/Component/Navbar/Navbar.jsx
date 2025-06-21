@@ -92,7 +92,7 @@ export const Navbar = () => {
   const isHomePage = location.pathname === '/';
 
   return (
-    <div className={`fixed w-full z-50 transition-all duration-300 ease-in-out ${
+    <div className={`fixed w-full z-20 transition-all duration-300 ease-in-out ${
       isVisible ? 'translate-y-0' : '-translate-y-full'
     }`}>
       {/* Top Navbar with Leaf Background */}

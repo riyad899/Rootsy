@@ -48,7 +48,8 @@ export const router = createBrowserRouter([
             {
                 path: "/tips/:id", // Fixed the route parameter syntax
                 element: <SingleTip />
-            }
+            },
+            
         ]
     },
 ]);
