@@ -10,6 +10,8 @@ import { Mytips } from '../Component/MyTips/Mytips';
 import GardenersGrid from '../Component/BrowsGurdernes/GardenersGrid';
 import { Alltips } from '../Component/AllTips/Alltips';
 import { SingleTip } from '../Component/MyTips/SingleTip';
+import { Buyplants } from '../Component/BuyAndSell/Buyplants';
+import { Sellplants } from '../Component/BuyAndSell/Sellplants';
 
 export const router = createBrowserRouter([
     {
@@ -45,11 +47,19 @@ export const router = createBrowserRouter([
                 path: "/tips",
                 element: <Alltips />
             },
+             {
+                path: "/buy-plants",
+                element: <Buyplants />
+            },
+            {
+                path: "/sell-plants",
+                element: <Sellplants />
+            },
             {
                 path: "/tips/:id", // Fixed the route parameter syntax
                 element: <SingleTip />
             },
-            
+
         ]
     },
 ]);

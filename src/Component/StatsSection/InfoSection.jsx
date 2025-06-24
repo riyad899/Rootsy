@@ -100,7 +100,7 @@ const InfoSection = () => {
       <div className="max-w-4xl mx-auto relative z-10">
         {/* Main heading section with fade-in animation */}
         <div className={`text-center mb-12 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 bg-gradient-to-r from-green-700 to-green-500 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold  mb-6 bg-gradient-to-r from-green-700 to-green-500 bg-clip-text text-transparent">
             We handle everything for you!
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-green-700 mx-auto mb-6 rounded-full"></div>
@@ -130,7 +130,7 @@ const InfoSection = () => {
                 className="w-full h-full filter drop-shadow-lg hover:drop-shadow-xl transition-all duration-300 animate-pulse"
                 style={{
                   animationDelay: '0.5s',
-                  transform: 'rotate(-15deg)',
+                  transform: 'rotate(3deg)',
                 }}
               />
             </div>

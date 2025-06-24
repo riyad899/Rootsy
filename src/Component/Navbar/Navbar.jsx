@@ -6,6 +6,7 @@ import { CiPhone, CiMail, CiTwitter } from "react-icons/ci";
 import { FaFacebookF, FaInstagram, FaPinterest, FaLeaf, FaSignInAlt, FaUserPlus } from 'react-icons/fa';
 import { NavLink, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../Provider/AuthContext';
+import { router } from '../../Routes/routes';
 
 export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -14,6 +15,7 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const { user, logOut } = useContext(AuthContext);
+
   const location = useLocation();
 
   // Enhanced scroll detection effect
@@ -82,8 +84,8 @@ export const Navbar = () => {
     { name: 'Home', href: '/', private: false },
     { name: 'Explore Gardeners', href: '/explore', private: false },
     { name: 'Browse Tips', href: '/tips', private: false },
-    { name: 'Share a Garden Tip', href: '/share-tip', private: true },
-    { name: 'My Tips', href: '/my-tips', private: true },
+    { name: 'Buy Plants', href: '/buy-plants', private: true },
+    { name: 'Sell Plants', href: '/sell-plants', private: true },
   ];
 
   // Filter nav links based on authentication
@@ -207,28 +209,149 @@ export const Navbar = () => {
                       />
                     </button>
                   </div>
-
+                  {/* Profile dropdown menu */}
                   {isProfileOpen && (
-                    <div
-                      className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white/95 backdrop-blur-md ring-1 ring-black ring-opacity-5 focus:outline-none"
-                      role="menu"
-                      aria-orientation="vertical"
-                      aria-labelledby="user-menu"
-                    >
-                      <div className="px-4 py-2 text-sm text-gray-700 border-b">
-                        <div className="font-medium">{user.displayName || 'User'}</div>
-                        <div className="text-xs text-gray-500 truncate">{user.email}</div>
-                      </div>
-                      <button
-                        onClick={handleLogOut}
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                        role="menuitem"
-                        tabIndex="0"
-                      >
-                        Sign out
-                      </button>
-                    </div>
-                  )}
+  <div
+    className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg py-1 bg-white/95 backdrop-blur-md ring-1 ring-black ring-opacity-5 focus:outline-none"
+    role="menu"
+    aria-orientation="vertical"
+    aria-labelledby="user-menu"
+  >
+    {/* User Info Section */}
+    <div className="px-4 py-3 text-sm text-gray-700 border-b border-gray-200">
+      <div className="font-medium">{user.displayName || 'User'}</div>
+      <div className="text-xs text-gray-500 truncate">{user.email}</div>
+    </div>
+
+    {/* Navigation Links */}
+    <div className="py-1">
+      <button
+        onClick={() => {
+          // Navigate to profile
+          // router.push('/profile') or your navigation method
+          setIsProfileOpen(false);
+        }}
+        className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+        role="menuitem"
+        tabIndex="0"
+      >
+        <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+        Profile
+      </button>
+
+      <NavLink to="/my-tips">
+      <button
+        onClick={() => {
+        navigate('/my-tips'); // Adjust this to your routing method
+          setIsProfileOpen(false);
+        }}
+        className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+        role="menuitem"
+        tabIndex="0"
+      >
+        <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+        </svg>
+        Tips
+      </button>
+      </NavLink>
+
+      <NavLink
+  to="/share-tip"
+  onClick={() => setIsProfileOpen(false)}
+  className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+  role="menuitem"
+>
+  <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+  </svg>
+  Share Tips
+</NavLink>
+
+      <button
+        onClick={() => {
+          // Navigate to buy plants
+          // router.push('/buy-plants') or your navigation method
+          setIsProfileOpen(false);
+        }}
+        className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+        role="menuitem"
+        tabIndex="0"
+      >
+        <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17M17 13v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
+        </svg>
+        Buy Plants
+      </button>
+
+      <button
+        onClick={() => {
+          // Navigate to sell plants
+          // router.push('/sell-plants') or your navigation method
+          setIsProfileOpen(false);
+        }}
+        className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+        role="menuitem"
+        tabIndex="0"
+      >
+        <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Sell Plants
+      </button>
+
+          <button
+        onClick={() => {
+          // Navigate to sell plants
+          // router.push('/sell-plants') or your navigation method
+          setIsProfileOpen(false);
+        }}
+        className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+        role="menuitem"
+        tabIndex="0"
+      >
+      <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+</svg>
+       Gardening Calender
+      </button>
+
+      <button
+        onClick={() => {
+          // Navigate to settings
+          // router.push('/settings') or your navigation method
+          setIsProfileOpen(false);
+        }}
+        className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+        role="menuitem"
+        tabIndex="0"
+      >
+        <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        Settings
+      </button>
+    </div>
+
+    {/* Logout Section */}
+    <div className="border-t border-gray-200 pt-1">
+      <button
+        onClick={handleLogOut}
+        className="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+        role="menuitem"
+        tabIndex="0"
+      >
+        <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        Sign out
+      </button>
+    </div>
+  </div>
+)}
                 </div>
               ) : (
                 <div className="flex space-x-4">

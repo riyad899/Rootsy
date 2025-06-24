@@ -264,7 +264,7 @@ export const Home = () => {
                 <motion.p
                   custom={0}
                   variants={textVariants}
-                  className="relative inline-block mb-6 text-sm font-light tracking-[0.3em] text-green-300 uppercase md:text-base"
+                  className="relative top-6 inline-block mb-6 text-sm font-light tracking-[0.3em] text-green-300 uppercase md:text-base"
                 >
                   <span className="relative z-10 px-6 py-2 backdrop-blur-sm bg-white/10 rounded-full border border-white/20">
                     {slides[currentSlide].subtitle}
@@ -281,7 +281,7 @@ export const Home = () => {
                 <motion.h1
                   custom={1}
                   variants={textVariants}
-                  className="mb-8 text-4xl font-light leading-[1.1] tracking-wide md:text-6xl lg:text-7xl xl:text-8xl will-change-transform"
+                  className="mb-8 text-4xl top-6 font-light leading-[1.1] tracking-wide md:text-6xl lg:text-7xl xl:text-8xl will-change-transform"
                   style={{
                     fontFamily: "'Playfair Display', serif",
                     textShadow: '0 4px 20px rgba(0,0,0,0.3)'
@@ -467,8 +467,8 @@ export const Home = () => {
       </section>
 
       <InfoSection />
-      <GardenerCard />
       <Toptreanding />
+      <GardenerCard />
       <About />
     </div>
   );

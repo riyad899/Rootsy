@@ -43,10 +43,13 @@ const GardenerCard = () => {
     <div className="w-full py-16 overflow-hidden">
       {/* Header */}
       <div className="text-center mb-12 px-4">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 bg-gradient-to-r from-green-700 to-green-500 bg-clip-text text-transparent">
+          {/* <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 bg-gradient-to-r from-green-700 to-green-500 bg-clip-text text-transparent">
                       Meet Our Expert Gardeners
 
-          </h2>
+          </h2> */}
+           <h1 className="text-4xl lg:text-5xl font-light text-gray-900 mb-6 tracking-tight">
+                <span className="font-serif italic text-[#1a3a27]">Meet</span> Our Expert Gardeners
+              </h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           Discover our passionate team of gardening professionals
         </p>

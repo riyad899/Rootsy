@@ -72,7 +72,7 @@ const About = () => {
             <div className="relative">
               <div className="relative overflow-hidden rounded-sm shadow-sm aspect-[4/3]">
                 <img
-                  src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&h=400&fit=crop"
+                  src=" https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&h=400&fit=crop"
                   alt="Gardenly team"
                   className="w-full h-full object-cover"
                 />

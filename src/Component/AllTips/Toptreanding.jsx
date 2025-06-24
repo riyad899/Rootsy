@@ -74,9 +74,9 @@ export const Toptreanding = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
       {/* Header Section */}
       <div className="py-16 px-4 text-center">
-        <h1 className="text-5xl font-bold text-[#1AB052] mb-4 tracking-tight">
-          Top Trending Tips
-        </h1>
+   <h1 className="text-4xl lg:text-5xl font-light text-gray-900 mb-6 tracking-tight">
+                <span className="font-serif italic text-[#1a3a27]">Top</span> Treading Tips
+              </h1>
         <p className="text-gray-600 text-lg max-w-2xl mx-auto">
           Discover curated gardening insights and professional landscaping advice
         </p>
@@ -108,10 +108,10 @@ export const Toptreanding = () => {
             {filteredTips.map((tip) => (
               <div
                 key={tip._id}
-                className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden border border-gray-100"
+                className="group relative bg-white rounded-l shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden border border-gray-100"
               >
                 {/* Image Container */}
-                <div className="aspect-[4/3] overflow-hidden rounded-t-2xl relative cursor-pointer"
+                <div className="aspect-[4/3] overflow-hidden rounded-t-[5px] relative cursor-pointer"
                      onClick={() => handleViewPost(tip._id)}>
                   <img
                     src={tip.imageUrl || 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=600&fit=crop'}

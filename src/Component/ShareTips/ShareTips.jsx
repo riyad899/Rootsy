@@ -247,7 +247,10 @@ export const ShareTips = () => {
     <div className="mt-[100px] min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6 sm:p-8">
         <div className="text-center mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-green-700">Share Your Garden Tip</h1>
+          {/* <h1 className="text-2xl sm:text-3xl font-bold text-green-700">Share Your Garden Tip</h1> */}
+            <h1 className="text-4xl lg:text-4xl font-light text-gray-900 mb-6 tracking-tight">
+                <span className="font-serif italic text-[#1a3a27]">Share</span> Your Garden Tip
+              </h1>
           <p className="mt-2 text-gray-600">Help fellow gardeners with your wisdom</p>
         </div>
 
@@ -298,7 +301,7 @@ export const ShareTips = () => {
                 name="difficulty"
                 value={formData.difficulty}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a3a27] focus:border-[#1a3a27] transition"
               >
                 <option value="Easy">Easy</option>
                 <option value="Medium">Medium</option>
@@ -393,7 +396,7 @@ export const ShareTips = () => {
                   />
                   <label
                     htmlFor="image-upload"
-                    className="mt-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 cursor-pointer"
+                    className="mt-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#1a3a27] hover:bg-green-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 cursor-pointer"
                   >
                     Select Image
                   </label>
@@ -473,8 +476,8 @@ export const ShareTips = () => {
               disabled={isUploading}
               className={`w-full py-3 px-4 text-white font-medium rounded-lg shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 ${
                 isUploading
-                  ? 'bg-green-400 cursor-not-allowed'
-                  : 'bg-green-600 hover:bg-green-700'
+                  ? 'bg-[#1a3a27] cursor-not-allowed'
+                  : 'bg-[#1a3a27] hover:bg-green-900'
               }`}
             >
               {isUploading ? 'Uploading...' : 'Share Your Tip'}
@@ -483,7 +486,7 @@ export const ShareTips = () => {
         </form>
       </div>
       <div className='mt-8 max-w-3xl mx-auto z-1000'>
-        <CopilotChat className="bg-amber-800"></CopilotChat>
+        <CopilotChat className="bg-[#1a3a27]"></CopilotChat>
       </div>
     </div>
   );
