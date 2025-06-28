@@ -9,7 +9,7 @@ export default function CopilotChat() {
       chatApiEndpoint="http://localhost:3000/copilotkit/chat" // Your Express endpoint
     >
       <CopilotSidebar
-        primaryColor="#16a34a"
+        primaryColor="#1a3a27"
         defaultOpen={false}
         labels={{
           title: "Your AI Assistant",

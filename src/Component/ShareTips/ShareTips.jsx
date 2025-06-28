@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../Provider/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import CopilotChat from '../CopilotChat.jsx/CopilotChat';
 import '@copilotkit/react-ui/styles.css';
+import { motion } from 'framer-motion';
+import { FaLeaf, FaUser, FaEnvelope, FaBook, FaEye, FaTags, FaClipboardList } from 'react-icons/fa';
 
 export const ShareTips = () => {
   const { user } = useContext(AuthContext);
@@ -13,21 +15,14 @@ export const ShareTips = () => {
     plantType: '',
     difficulty: 'Easy',
     description: '',
-    imageUrl: '',
     category: 'Plant Care',
     availability: 'Public',
     userName: '',
     userEmail: ''
   });
 
-  const [isDragging, setIsDragging] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [isUploading, setIsUploading] = useState(false);
-  const [previewImage, setPreviewImage] = useState(null);
   const [error, setError] = useState(null);
-
-  // imgBB API key
-  const apiKey = 'd887aa1f55a982c1a6829f027d626c89';
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize user data when component mounts or user changes
   useEffect(() => {
@@ -81,118 +76,14 @@ export const ShareTips = () => {
     }));
   };
 
-  // Drag and drop handlers
-  const handleDragEnter = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(true);
-  }, []);
-
-  const handleDragLeave = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-  }, []);
-
-  const handleDragOver = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-  }, []);
-
-  const handleDrop = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-
-    const files = e.dataTransfer.files;
-    if (files && files.length > 0) {
-      handleImageUpload(files[0]);
-    }
-  }, []);
-
-  const handleFileInput = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      handleImageUpload(file);
-    }
-  };
-
-  const handleImageUpload = async (file) => {
-    if (!file.type.match('image.*')) {
-      setError('Please upload an image file');
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      setError('Image size should be less than 5MB');
-      return;
-    }
-
-    setError(null);
-    setIsUploading(true);
-    setUploadProgress(0);
-
-    // Preview image
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setPreviewImage(e.target.result);
-    };
-    reader.readAsDataURL(file);
-
-    // Upload to imgBB
-    const formData = new FormData();
-    formData.append('image', file);
-
-    try {
-      // Using XMLHttpRequest to track upload progress
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', `https://api.imgbb.com/1/upload?key=${apiKey}`, true);
-
-      xhr.upload.onprogress = (e) => {
-        if (e.lengthComputable) {
-          const percentCompleted = Math.round((e.loaded * 100) / e.total);
-          setUploadProgress(percentCompleted);
-        }
-      };
-
-      const promise = new Promise((resolve, reject) => {
-        xhr.onload = () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            const data = JSON.parse(xhr.responseText);
-            resolve(data);
-          } else {
-            reject(new Error(xhr.statusText));
-          }
-        };
-        xhr.onerror = () => reject(new Error('Network error'));
-      });
-
-      xhr.send(formData);
-
-      const data = await promise;
-
-      if (data.success) {
-        setFormData(prev => ({
-          ...prev,
-          imageUrl: data.data.url
-        }));
-      } else {
-        throw new Error(data.error?.message || 'Image upload failed');
-      }
-    } catch (err) {
-      setError(err.message);
-      setPreviewImage(null);
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setIsSubmitting(true);
 
     if (!formData.title || !formData.plantType || !formData.description) {
       setError('Please fill in all required fields');
+      setIsSubmitting(false);
       return;
     }
 
@@ -203,7 +94,6 @@ export const ShareTips = () => {
         plantType: formData.plantType,
         difficulty: formData.difficulty,
         description: formData.description,
-        imageUrl: formData.imageUrl,
         category: formData.category,
         availability: formData.availability,
         userName: formData.userName,
@@ -230,58 +120,128 @@ export const ShareTips = () => {
     } catch (err) {
       setError(err.message || 'Failed to share tip');
       console.error('Error sharing tip:', err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   if (!user) {
     return (
-      <div className="mt-[100px] min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6 sm:p-8">
-          <p className="text-center text-gray-600">Loading...</p>
+      <div className="mt-[100px] min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden p-6 sm:p-8 border border-emerald-100">
+          <div className="flex justify-center items-center">
+            <div className="relative">
+              <div className="w-16 h-16 border-4 border-emerald-200 rounded-full animate-spin"></div>
+              <div className="w-16 h-16 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
+            </div>
+          </div>
+          <p className="text-center text-emerald-600 font-medium mt-4">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="mt-[100px] min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6 sm:p-8">
-        <div className="text-center mb-8">
-          {/* <h1 className="text-2xl sm:text-3xl font-bold text-green-700">Share Your Garden Tip</h1> */}
-            <h1 className="text-4xl lg:text-4xl font-light text-gray-900 mb-6 tracking-tight">
-                <span className="font-serif italic text-[#1a3a27]">Share</span> Your Garden Tip
-              </h1>
-          <p className="mt-2 text-gray-600">Help fellow gardeners with your wisdom</p>
-        </div>
+    <div className="mt-[100px] min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-white py-8 px-4 sm:px-6 lg:px-8">
+      {/* Floating background elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        {Array.from({ length: 10 }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute opacity-10"
+            animate={{
+              y: [0, -30, 0],
+              x: [0, Math.random() * 20 - 10, 0],
+              rotate: [0, 360],
+            }}
+            transition={{
+              duration: 8 + Math.random() * 4,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: Math.random() * 5,
+            }}
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+            }}
+          >
+            <FaLeaf className="w-6 h-6 text-emerald-300" />
+          </motion.div>
+        ))}
+      </div>
 
-        {error && (
-          <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-            {error}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="max-w-3xl mx-auto bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden p-6 sm:p-8 border border-emerald-200 relative z-10"
+      >
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-center mb-8"
+        >
+          <div className="flex justify-center mb-4">
+            <div className="p-4 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl">
+              <FaLeaf className="w-8 h-8 text-white" />
+            </div>
           </div>
+          <h1 className="text-4xl lg:text-5xl font-light text-gray-900 mb-4 tracking-tight">
+            <span className="font-serif italic bg-gradient-to-r from-emerald-700 to-teal-700 bg-clip-text text-transparent">Share</span> Your Garden Tip
+          </h1>
+          <p className="text-emerald-600 text-lg max-w-2xl mx-auto">
+            Help fellow gardeners grow with your wisdom and experience
+          </p>
+        </motion.div>
+
+        {/* Error Message */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg flex items-center space-x-2"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{error}</span>
+          </motion.div>
         )}
 
-        <form className="space-y-5" onSubmit={handleSubmit}>
+        <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Title */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Tip Title <span className="text-red-500">*</span>
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+              <FaClipboardList className="w-4 h-4 mr-2 text-emerald-600" />
+              Tip Title <span className="text-red-500 ml-1">*</span>
             </label>
             <input
               type="text"
               name="title"
               value={formData.title}
               onChange={handleChange}
-              placeholder="e.g., How I Grow Tomatoes Indoors"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+              placeholder="e.g., How I Grow Perfect Tomatoes Indoors"
+              className="w-full px-4 py-3 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 bg-white/70 backdrop-blur-sm hover:border-emerald-300"
               required
             />
-          </div>
+          </motion.div>
 
           {/* Plant Type and Difficulty */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Plant Type/Topic <span className="text-red-500">*</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                <FaLeaf className="w-4 h-4 mr-2 text-emerald-600" />
+                Plant Type/Topic <span className="text-red-500 ml-1">*</span>
               </label>
               <input
                 type="text"
@@ -289,126 +249,64 @@ export const ShareTips = () => {
                 value={formData.plantType}
                 onChange={handleChange}
                 placeholder="e.g., Tomatoes, Roses, Composting"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+                className="w-full px-4 py-3 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 bg-white/70 backdrop-blur-sm hover:border-emerald-300"
                 required
               />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Difficulty Level <span className="text-red-500">*</span>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                <FaBook className="w-4 h-4 mr-2 text-teal-600" />
+                Difficulty Level <span className="text-red-500 ml-1">*</span>
               </label>
               <select
                 name="difficulty"
                 value={formData.difficulty}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a3a27] focus:border-[#1a3a27] transition"
+                className="w-full px-4 py-3 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 bg-white/70 backdrop-blur-sm hover:border-emerald-300"
               >
-                <option value="Easy">Easy</option>
-                <option value="Medium">Medium</option>
-                <option value="Hard">Hard</option>
+                <option value="Easy">🌱 Easy</option>
+                <option value="Medium">🌿 Medium</option>
+                <option value="Hard">🌳 Hard</option>
               </select>
-            </div>
+            </motion.div>
           </div>
 
           {/* Description */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description <span className="text-red-500">*</span>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
+            <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+              <svg className="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Description <span className="text-red-500 ml-1">*</span>
             </label>
             <textarea
               name="description"
               rows={5}
               value={formData.description}
               onChange={handleChange}
-              placeholder="Share your detailed tips and experiences..."
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+              placeholder="Share your detailed tips, experiences, and step-by-step instructions..."
+              className="w-full px-4 py-3 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 bg-white/70 backdrop-blur-sm hover:border-emerald-300 resize-none"
               required
             />
-          </div>
+          </motion.div>
 
-          {/* Image Upload */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Tip Image (Optional)
-            </label>
-            <div
-              className={`border-2 border-dashed rounded-lg p-6 text-center transition ${
-                isDragging ? 'border-green-500 bg-green-50' : 'border-gray-300'
-              }`}
-              onDragEnter={handleDragEnter}
-              onDragLeave={handleDragLeave}
-              onDragOver={handleDragOver}
-              onDrop={handleDrop}
+          {/* User Info */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
             >
-              {previewImage ? (
-                <div className="mb-4">
-                  <img
-                    src={previewImage}
-                    alt="Preview"
-                    className="max-h-48 mx-auto rounded-lg"
-                  />
-                  <button
-                    type="button"
-                    className="mt-2 text-sm text-red-600 hover:text-red-800"
-                    onClick={() => {
-                      setPreviewImage(null);
-                      setFormData(prev => ({ ...prev, imageUrl: '' }));
-                    }}
-                  >
-                    Remove Image
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <div className="flex flex-col items-center justify-center space-y-2">
-                    <svg
-                      className="w-12 h-12 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                      ></path>
-                    </svg>
-                    <p className="text-sm text-gray-600">
-                      Drag and drop an image here, or click to select
-                    </p>
-                    {isUploading && (
-                      <div className="w-full bg-gray-200 rounded-full h-2.5">
-                        <div
-                          className="bg-green-600 h-2.5 rounded-full"
-                          style={{ width: `${uploadProgress}%` }}
-                        ></div>
-                      </div>
-                    )}
-                  </div>
-                  <input
-                    type="file"
-                    id="image-upload"
-                    className="hidden"
-                    accept="image/*"
-                    onChange={handleFileInput}
-                  />
-                  <label
-                    htmlFor="image-upload"
-                    className="mt-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#1a3a27] hover:bg-green-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 cursor-pointer"
-                  >
-                    Select Image
-                  </label>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* User Info (auto-filled from auth) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                <FaUser className="w-4 h-4 mr-2 text-emerald-600" />
                 Your Name
               </label>
               <input
@@ -416,11 +314,16 @@ export const ShareTips = () => {
                 name="userName"
                 value={formData.userName}
                 readOnly
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
+                className="w-full px-4 py-3 border border-emerald-200 rounded-lg bg-emerald-50/50 cursor-not-allowed text-emerald-700"
               />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
+              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                <FaEnvelope className="w-4 h-4 mr-2 text-teal-600" />
                 Your Email
               </label>
               <input
@@ -428,66 +331,98 @@ export const ShareTips = () => {
                 name="userEmail"
                 value={formData.userEmail}
                 readOnly
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
+                className="w-full px-4 py-3 border border-emerald-200 rounded-lg bg-emerald-50/50 cursor-not-allowed text-emerald-700"
               />
-            </div>
+            </motion.div>
           </div>
 
           {/* Category and Availability */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Category <span className="text-red-500">*</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
+            >
+              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                <FaTags className="w-4 h-4 mr-2 text-emerald-600" />
+                Category <span className="text-red-500 ml-1">*</span>
               </label>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+                className="w-full px-4 py-3 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 bg-white/70 backdrop-blur-sm hover:border-emerald-300"
               >
-                <option value="Plant Care">Plant Care</option>
-                <option value="Composting">Composting</option>
-                <option value="Vertical Gardening">Vertical Gardening</option>
-                <option value="Container Gardening">Container Gardening</option>
-                <option value="Indoor Gardening">Indoor Gardening</option>
-                <option value="Pest Control">Pest Control</option>
+                <option value="Plant Care">🌱 Plant Care</option>
+                <option value="Composting">♻️ Composting</option>
+                <option value="Vertical Gardening">🏗️ Vertical Gardening</option>
+                <option value="Container Gardening">🪴 Container Gardening</option>
+                <option value="Indoor Gardening">🏠 Indoor Gardening</option>
+                <option value="Pest Control">🐛 Pest Control</option>
               </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Visibility <span className="text-red-500">*</span>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
+            >
+              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                <FaEye className="w-4 h-4 mr-2 text-teal-600" />
+                Visibility <span className="text-red-500 ml-1">*</span>
               </label>
               <select
                 name="availability"
                 value={formData.availability}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
+                className="w-full px-4 py-3 border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 bg-white/70 backdrop-blur-sm hover:border-emerald-300"
               >
-                <option value="Public">Public (Visible to everyone)</option>
-                <option value="Hidden">Hidden (Only visible to you)</option>
+                <option value="Public">🌍 Public (Visible to everyone)</option>
+                <option value="Hidden">🔒 Hidden (Only visible to you)</option>
               </select>
-            </div>
+            </motion.div>
           </div>
 
           {/* Submit Button */}
-          <div className="pt-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="pt-6"
+          >
             <button
               type="submit"
-              disabled={isUploading}
-              className={`w-full py-3 px-4 text-white font-medium rounded-lg shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 ${
-                isUploading
-                  ? 'bg-[#1a3a27] cursor-not-allowed'
-                  : 'bg-[#1a3a27] hover:bg-green-900'
-              }`}
+              disabled={isSubmitting}
+              className="w-full py-4 px-6 text-white font-medium rounded-xl shadow-lg transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-emerald-300 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 transform hover:scale-[1.02] hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              {isUploading ? 'Uploading...' : 'Share Your Tip'}
+              {isSubmitting ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Sharing Your Tip...</span>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center space-x-2">
+                  <FaLeaf className="w-5 h-5" />
+                  <span>Share Your Garden Wisdom</span>
+                </div>
+              )}
             </button>
-          </div>
+          </motion.div>
         </form>
-      </div>
-      <div className='mt-8 max-w-3xl mx-auto z-1000'>
-        <CopilotChat className="bg-[#1a3a27]"></CopilotChat>
-      </div>
+      </motion.div>
+
+      {/* CopilotChat with updated styling */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.9 }}
+        className='mt-8 max-w-3xl mx-auto z-10 relative'
+      >
+        <div className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl p-1 shadow-xl">
+          <div className="bg-white rounded-xl">
+            <CopilotChat className="rounded-xl" />
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 };

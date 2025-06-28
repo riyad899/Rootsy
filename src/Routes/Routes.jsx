@@ -10,8 +10,11 @@ import { Mytips } from '../Component/MyTips/Mytips';
 import GardenersGrid from '../Component/BrowsGurdernes/GardenersGrid';
 import { Alltips } from '../Component/AllTips/Alltips';
 import { SingleTip } from '../Component/MyTips/SingleTip';
-import { Buyplants } from '../Component/BuyAndSell/Buyplants';
+
 import { Sellplants } from '../Component/BuyAndSell/Sellplants';
+import Buyplants from '../Component/BuyAndSell/Buyplants';
+import { MyProfile } from '../Component/MyProfile/MyProfile';
+import { Dashboard } from '../Component/Dashboard/Dashboard';
 
 export const router = createBrowserRouter([
     {
@@ -48,8 +51,16 @@ export const router = createBrowserRouter([
                 element: <Alltips />
             },
              {
+                path: "/profile",
+                element: <MyProfile></MyProfile>
+            },
+            {
+                path: "/dashboard",
+                element:<Dashboard></Dashboard>
+            },
+             {
                 path: "/buy-plants",
-                element: <Buyplants />
+                Component:Buyplants
             },
             {
                 path: "/sell-plants",
