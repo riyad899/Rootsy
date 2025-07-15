@@ -3,6 +3,7 @@ import { AuthContext } from '../../Provider/AuthContext';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
+import CopilotChat from '../CopilotChat.jsx/CopilotChat';
 
 export const Mytips = () => {
     const { user } = useContext(AuthContext);
@@ -566,6 +567,9 @@ export const Mytips = () => {
                     <p className="font-medium">No tips found. Create your first gardening tip!</p>
                 </div>
             )}
+
+            {/* CopilotChat component for tips assistance */}
+            <CopilotChat />
         </div>
     );
 };

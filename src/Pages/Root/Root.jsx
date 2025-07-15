@@ -2,6 +2,8 @@ import React from 'react';
 import { Navbar } from '../../Component/Navbar/Navbar';
 import { Outlet } from 'react-router';
 import { UndeerSide } from '../../Component/UndeerSide/UndeerSide';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const Root = () => {
   return (
@@ -28,6 +30,20 @@ export const Root = () => {
         width: '100%',
         flexShrink: 0 // Prevents footer from shrinking
       }} />
+
+      {/* Toast notifications */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }

@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import GoogleButton from 'react-google-button';
 import { motion } from 'framer-motion';
 import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { getAuth, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
-import app from '../../Firebase/firebase.config';
+import { AuthContext } from '../../Provider/AuthContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -15,7 +14,7 @@ export const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const auth = getAuth(app);
+  const { signIn, googleLogin } = useContext(AuthContext);
 
   // Animation variants
   const containerVariants = {
@@ -61,7 +60,7 @@ export const Login = () => {
     setLoading(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await signIn(email, password);
       toast.success('🎉 Successfully logged in!', {
         position: "top-right",
         autoClose: 2000,
@@ -80,6 +79,8 @@ export const Login = () => {
         errorMessage = 'User not found';
       } else if (err.code === 'auth/wrong-password') {
         errorMessage = 'Incorrect password';
+      } else if (err.code === 'auth/invalid-credential') {
+        errorMessage = 'Invalid email or password';
       }
 
       setError(errorMessage);
@@ -99,10 +100,9 @@ export const Login = () => {
   const handleGoogleSignIn = async () => {
     setError('');
     setLoading(true);
-    const provider = new GoogleAuthProvider();
 
     try {
-      await signInWithPopup(auth, provider);
+      await googleLogin();
       toast.success('🎉 Google login successful!', {
         position: "top-right",
         autoClose: 2000,
@@ -214,7 +214,7 @@ export const Login = () => {
               )}
 
               <motion.div variants={itemVariants} className="mb-6">
-                <label className="block text-gray-700 text-sm font-medium mb-2 flex items-center">
+                <label className="text-gray-700 text-sm font-medium mb-2 flex items-center">
                   <FaUser className="mr-2 text-[#124A2F]" />
                   Email
                 </label>
@@ -230,7 +230,7 @@ export const Login = () => {
               </motion.div>
 
               <motion.div variants={itemVariants} className="mb-4">
-                <label className="block text-gray-700 text-sm font-medium mb-2 flex items-center">
+                <label className="text-gray-700 text-sm font-medium mb-2 flex items-center">
                   <FaLock className="mr-2 text-[#124A2F]" />
                   Password
                 </label>

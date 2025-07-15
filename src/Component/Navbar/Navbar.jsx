@@ -11,14 +11,62 @@ import { router } from '../../Routes/routes';
 export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isInboxOpen, setIsInboxOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [fireCount, setFireCount] = useState(42); // Demo fire count
-  const [cartCount, setCartCount] = useState(3); // Demo cart count
+  const [cartCount, setCartCount] = useState(0);
   const { user, logOut } = useContext(AuthContext);
 
   const location = useLocation();
+
+  // Update cart count from localStorage
+  useEffect(() => {
+    const updateCartCount = () => {
+      const cart = JSON.parse(localStorage.getItem('gardeningCart') || '[]');
+      const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+      setCartCount(totalItems);
+    };
+
+    // Initial load
+    updateCartCount();
+
+    // Listen for storage changes (when cart is updated in other tabs)
+    window.addEventListener('storage', updateCartCount);
+
+    // Custom event for same-tab updates
+    window.addEventListener('cartUpdated', updateCartCount);
+
+    return () => {
+      window.removeEventListener('storage', updateCartCount);
+      window.removeEventListener('cartUpdated', updateCartCount);
+    };
+  }, []);
+
+  // Click outside handler to close dropdowns
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Close notification dropdown if clicked outside
+      if (isNotificationOpen && !event.target.closest('[aria-labelledby="notification-menu"]') && !event.target.closest('button[aria-expanded="true"]')) {
+        setIsNotificationOpen(false);
+      }
+      // Close inbox dropdown if clicked outside
+      if (isInboxOpen && !event.target.closest('[aria-labelledby="inbox-menu"]') && !event.target.closest('button[aria-expanded="true"]')) {
+        setIsInboxOpen(false);
+      }
+      // Close profile dropdown if clicked outside
+      if (isProfileOpen && !event.target.closest('[aria-labelledby="user-menu"]') && !event.target.closest('button[aria-expanded="true"]')) {
+        setIsProfileOpen(false);
+      }
+    };
+
+    if (isNotificationOpen || isInboxOpen || isProfileOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isNotificationOpen, isInboxOpen, isProfileOpen]);
 
   // Enhanced scroll detection effect
   useEffect(() => {
@@ -38,6 +86,8 @@ export const Navbar = () => {
       else if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setIsVisible(false);
         setIsProfileOpen(false);
+        setIsNotificationOpen(false);
+        setIsInboxOpen(false);
         setIsMobileMenuOpen(false);
       } else if (currentScrollY < lastScrollY) {
         setIsVisible(true);
@@ -68,6 +118,8 @@ export const Navbar = () => {
     logOut()
       .then(() => {
         setIsProfileOpen(false);
+        setIsNotificationOpen(false);
+        setIsInboxOpen(false);
       })
       .catch((error) => {
         console.error(error);
@@ -81,6 +133,58 @@ export const Navbar = () => {
       setIsProfileOpen(!isProfileOpen);
     }
   };
+
+  const handleNotificationKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      setIsNotificationOpen(false);
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      setIsNotificationOpen(!isNotificationOpen);
+    }
+  };
+
+  const handleInboxKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      setIsInboxOpen(false);
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      setIsInboxOpen(!isInboxOpen);
+    }
+  };
+
+  // Sample messages data
+  const sampleMessages = [
+    {
+      id: 1,
+      sender: 'Sarah Chen',
+      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face',
+      message: 'Hey! I saw your post about the fiddle leaf fig. Do you have any care tips?',
+      time: '2 min ago',
+      unread: true
+    },
+    {
+      id: 2,
+      sender: 'Mike Johnson',
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
+      message: 'Thanks for the succulent care guide! My plants are thriving now.',
+      time: '1 hour ago',
+      unread: true
+    },
+    {
+      id: 3,
+      sender: 'Emma Wilson',
+      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face',
+      message: 'Are you still selling the monstera plant?',
+      time: '3 hours ago',
+      unread: false
+    },
+    {
+      id: 4,
+      sender: 'Garden Club',
+      avatar: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=40&h=40&fit=crop&crop=center',
+      message: 'Welcome to our monthly newsletter! Check out this month\'s featured plants.',
+      time: '1 day ago',
+      unread: false
+    }
+  ];
 
   const navLinks = [
     { name: 'Home', href: '/', private: false },
@@ -158,32 +262,172 @@ export const Navbar = () => {
               </button>
 
               {/* Cart Button */}
-              <button className={`relative inline-flex items-center px-3 py-2 rounded-full font-medium transition-all duration-300 hover:scale-105 ${isScrolled || !isHomePage
-                ? 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200'
-                : 'text-emerald-700 bg-emerald-50/80 hover:bg-emerald-100/80 border border-emerald-200/60 backdrop-blur-sm'
-                }`}>
+              <NavLink
+                to="/cart"
+                className={({ isActive }) => {
+                  const baseClasses = "relative inline-flex items-center px-3 py-2 rounded-full font-medium transition-all duration-300 hover:scale-105";
+                  if (isScrolled || !isHomePage) {
+                    return isActive
+                      ? `${baseClasses} text-emerald-700 bg-emerald-100 border border-emerald-300`
+                      : `${baseClasses} text-emerald-600 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200`;
+                  } else {
+                    return isActive
+                      ? `${baseClasses} text-emerald-800 bg-emerald-100/90 border border-emerald-300/70 backdrop-blur-sm`
+                      : `${baseClasses} text-emerald-700 bg-emerald-50/80 hover:bg-emerald-100/80 border border-emerald-200/60 backdrop-blur-sm`;
+                  }
+                }}
+              >
                 <FaShoppingCart className="w-4 h-4" />
                 {cartCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-teal-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-bounce">
                     {cartCount}
                   </span>
                 )}
-              </button>
+              </NavLink>
 
-              <button className={`relative inline-flex items-center px-3 py-2 rounded-full font-medium transition-all duration-300 hover:scale-105 ${isScrolled || !isHomePage
-                ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200'
-                : 'text-blue-700 bg-blue-50/80 hover:bg-blue-100/80 border border-blue-200/60 backdrop-blur-sm'
-                }`}>
-                <FaEnvelope className="w-4 h-4" />
-              </button>
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    setIsProfileOpen(false);
+                    setIsNotificationOpen(false);
+                    setIsInboxOpen(!isInboxOpen);
+                  }}
+                  onKeyDown={handleInboxKeyDown}
+                  className={`relative inline-flex items-center px-3 py-2 rounded-full font-medium transition-all duration-300 hover:scale-105 ${isScrolled || !isHomePage
+                    ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200'
+                    : 'text-blue-700 bg-blue-50/80 hover:bg-blue-100/80 border border-blue-200/60 backdrop-blur-sm'
+                  }`}
+                  aria-expanded={isInboxOpen}
+                  aria-haspopup="true"
+                >
+                  <FaEnvelope className="w-4 h-4" />
+                  {/* Unread messages indicator */}
+                  {sampleMessages.filter(msg => msg.unread).length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {sampleMessages.filter(msg => msg.unread).length}
+                    </span>
+                  )}
+                </button>
+
+                {/* Inbox dropdown menu */}
+                {isInboxOpen && (
+                  <div
+                    className="origin-top-right absolute right-0 mt-2 w-96 rounded-xl shadow-lg py-1 bg-white/95 backdrop-blur-md ring-1 ring-emerald-200 ring-opacity-50 focus:outline-none border border-emerald-100"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="inbox-menu"
+                  >
+                    {/* Inbox Header */}
+                    <div className="px-4 py-3 text-sm text-gray-700 border-b border-emerald-100">
+                      <div className="font-medium text-emerald-800 flex items-center justify-between">
+                        <span>Messages</span>
+                        <FaEnvelope className="w-4 h-4 text-emerald-600" />
+                      </div>
+                    </div>
+
+                    {/* Messages List */}
+                    <div className="max-h-80 overflow-y-auto">
+                      {sampleMessages.slice(0, 3).map((message) => (
+                        <div
+                          key={message.id}
+                          className={`px-4 py-3 hover:bg-emerald-50 cursor-pointer transition-colors border-b border-gray-100 last:border-b-0 ${
+                            message.unread ? 'bg-blue-50/50' : ''
+                          }`}
+                          onClick={() => {
+                            setIsInboxOpen(false);
+                            // Navigate to messages page with specific message
+                            window.location.href = `/messages?id=${message.id}`;
+                          }}
+                        >
+                          <div className="flex items-start space-x-3">
+                            <img
+                              src={message.avatar}
+                              alt={message.sender}
+                              className="w-10 h-10 rounded-full object-cover"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between">
+                                <p className={`text-sm ${message.unread ? 'font-semibold text-gray-900' : 'font-medium text-gray-700'}`}>
+                                  {message.sender}
+                                </p>
+                                <div className="flex items-center">
+                                  <span className="text-xs text-gray-500">{message.time}</span>
+                                  {message.unread && (
+                                    <div className="w-2 h-2 bg-emerald-500 rounded-full ml-2"></div>
+                                  )}
+                                </div>
+                              </div>
+                              <p className={`text-sm ${message.unread ? 'text-gray-900' : 'text-gray-600'} truncate mt-1`}>
+                                {message.message}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Show All Messages Button */}
+                    <div className="px-4 py-3 border-t border-emerald-100">
+                      <NavLink
+                        to="/messages"
+                        onClick={() => setIsInboxOpen(false)}
+                        className="block w-full text-center px-4 py-2 text-sm font-medium text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors"
+                      >
+                        Show all messages
+                      </NavLink>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {/* Notification Button */}
-              <button className={`relative inline-flex items-center px-3 py-2 rounded-full font-medium transition-all duration-300 hover:scale-105 ${isScrolled || !isHomePage
-                ? 'text-gray-600 bg-gray-50 hover:bg-gray-100 border border-gray-200'
-                : 'text-gray-700 bg-gray-50/80 hover:bg-gray-100/80 border border-gray-200/60 backdrop-blur-sm'
-                }`}>
-                <FaBell className="w-4 h-4 text-[#007A55]" />
-              </button>
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    setIsProfileOpen(false);
+                    setIsInboxOpen(false);
+                    setIsNotificationOpen(!isNotificationOpen);
+                  }}
+                  onKeyDown={handleNotificationKeyDown}
+                  className={`relative inline-flex items-center px-3 py-2 rounded-full font-medium transition-all duration-300 hover:scale-105 ${isScrolled || !isHomePage
+                    ? 'text-gray-600 bg-gray-50 hover:bg-gray-100 border border-gray-200'
+                    : 'text-gray-700 bg-gray-50/80 hover:bg-gray-100/80 border border-gray-200/60 backdrop-blur-sm'
+                  }`}
+                  aria-expanded={isNotificationOpen}
+                  aria-haspopup="true"
+                >
+                  <FaBell className="w-4 h-4 text-[#007A55]" />
+                </button>
+
+                {/* Notification dropdown menu */}
+                {isNotificationOpen && (
+                  <div
+                    className="origin-top-right absolute right-0 mt-2 w-80 rounded-xl shadow-lg py-1 bg-white/95 backdrop-blur-md ring-1 ring-emerald-200 ring-opacity-50 focus:outline-none border border-emerald-100"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="notification-menu"
+                  >
+                    {/* Notification Header */}
+                    <div className="px-4 py-3 text-sm text-gray-700 border-b border-emerald-100">
+                      <div className="font-medium text-emerald-800 flex items-center justify-between">
+                        <span>Notifications</span>
+                        <FaBell className="w-4 h-4 text-emerald-600" />
+                      </div>
+                    </div>
+
+                    {/* Notification Content */}
+                    <div className="py-4">
+                      <div className="flex flex-col items-center justify-center text-center px-4 py-8">
+                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                          <FaBell className="w-8 h-8 text-gray-400" />
+                        </div>
+                        <p className="text-gray-500 text-sm font-medium mb-1">No notifications</p>
+                        <p className="text-gray-400 text-xs">You're all caught up!</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
 
 
 
@@ -199,7 +443,11 @@ export const Navbar = () => {
                         id="user-menu"
                         aria-expanded={isProfileOpen}
                         aria-haspopup="true"
-                        onClick={() => setIsProfileOpen(!isProfileOpen)}
+                        onClick={() => {
+                          setIsNotificationOpen(false);
+                          setIsInboxOpen(false);
+                          setIsProfileOpen(!isProfileOpen);
+                        }}
                         onKeyDown={handleProfileKeyDown}
                       >
                         <span className="sr-only">Open user menu</span>
@@ -302,19 +550,17 @@ export const Navbar = () => {
                             Sell Plants
                           </button>
 
-                          <button
-                            onClick={() => {
-                              setIsProfileOpen(false);
-                            }}
+                               <NavLink
+                            to="/calender"
+                            onClick={() => setIsProfileOpen(false)}
                             className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
                             role="menuitem"
-                            tabIndex="0"
                           >
                             <svg className="w-4 h-4 mr-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
                             </svg>
-                            Gardening Calendar
-                          </button>
+                               Gardening Calendar
+                          </NavLink>
 
                           <button
                             onClick={() => {
@@ -427,7 +673,11 @@ export const Navbar = () => {
                 <FaFire className="w-4 h-4 mr-2" />
                 <span className="text-sm font-bold">{fireCount}</span>
               </button>
-              <button className="relative flex items-center px-4 py-2 rounded-full text-emerald-600 bg-emerald-50 border border-emerald-200 font-medium">
+
+              <NavLink
+                to="/cart"
+                className="relative flex items-center px-4 py-2 rounded-full text-emerald-600 bg-emerald-50 border border-emerald-200 font-medium hover:bg-emerald-100 transition-colors"
+              >
                 <FaShoppingCart className="w-4 h-4 mr-2" />
                 <span className="text-sm">Cart</span>
                 {cartCount > 0 && (
@@ -435,7 +685,9 @@ export const Navbar = () => {
                     {cartCount}
                   </span>
                 )}
-              </button>
+              </NavLink>
+
+
             </div>
 
             {filteredNavLinks.map((link) => (

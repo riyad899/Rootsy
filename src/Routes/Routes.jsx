@@ -13,8 +13,11 @@ import { SingleTip } from '../Component/MyTips/SingleTip';
 
 import { Sellplants } from '../Component/BuyAndSell/Sellplants';
 import Buyplants from '../Component/BuyAndSell/Buyplants';
+import { Cart } from '../Component/Cart/Cart';
 import { MyProfile } from '../Component/MyProfile/MyProfile';
 import { Dashboard } from '../Component/Dashboard/Dashboard';
+import { GardeningCalendar } from '../Component/GardeningCalender/GardeningCalendar';
+import { Messages } from '../Component/Messages/Messages';
 
 export const router = createBrowserRouter([
     {
@@ -60,11 +63,23 @@ export const router = createBrowserRouter([
             },
              {
                 path: "/buy-plants",
-                Component:Buyplants
+                element: <Buyplants />
             },
             {
                 path: "/sell-plants",
                 element: <Sellplants />
+            },
+            {
+                path: "/cart",
+                element: <Cart />
+            },
+            {
+                path: "/messages",
+                element: <Messages />
+            },
+             {
+                path: "/calender",
+                element: <GardeningCalendar></GardeningCalendar>
             },
             {
                 path: "/tips/:id", // Fixed the route parameter syntax

@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { Star, ShoppingCart, Heart, MapPin, Truck, Shield, ArrowLeft, User, Calendar, Leaf, ArrowRight } from 'lucide-react';
+import { Star, ShoppingCart, Heart, MapPin, Truck, Shield, ArrowLeft, User, Calendar, Leaf, ArrowRight, Search } from 'lucide-react';
+import { toast } from 'react-toastify';
+import { storage } from '../../utils/localStorage';
 
 const Buyplants = () => {
   const [selectedPlant, setSelectedPlant] = useState(null);
   const [favorites, setFavorites] = useState(new Set());
   const [cart, setCart] = useState([]);
   const [currentView, setCurrentView] = useState('home'); // 'home' or 'all-plants'
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All Plants');
 
   // Expanded plant data with 12 plants
   const plantsData = [
@@ -250,8 +254,26 @@ const Buyplants = () => {
   };
 
   const addToCart = (plant) => {
+    // Add to local state
     setCart([...cart, plant]);
+
+    // Use utility function to handle localStorage
+    storage.addToCart(plant);
+
+    // Show success message
+    toast.success(`${plant.name} added to cart!`, {
+      position: "top-right",
+      autoClose: 2000,
+    });
   };
+
+  // Filter plants based on search query and category
+  const filteredPlants = plantsData.filter(plant => {
+    const matchesSearch = plant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         plant.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === 'All Plants' || plant.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   const renderStars = (rating) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -408,9 +430,23 @@ const Buyplants = () => {
           <h1 className="text-4xl lg:text-5xl font-light text-gray-900 mb-6 tracking-tight">
             <span className="font-serif italic bg-gradient-to-r from-emerald-700 to-teal-700 bg-clip-text text-transparent">Plant</span> Marketplace
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
             Discover beautiful plants from trusted sellers in your community
           </p>
+
+          {/* Search Bar */}
+          <div className="max-w-md mx-auto relative">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search plants..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm"
+              />
+            </div>
+          </div>
         </div>
 
         {/* Filter Bar */}
@@ -418,7 +454,12 @@ const Buyplants = () => {
           {['All Plants', 'Indoor Plants', 'Indoor Trees', 'Succulents', 'Hanging Plants', 'Flowering Plants'].map((category) => (
             <button
               key={category}
-              className="px-6 py-2 rounded-full border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all duration-300 font-medium shadow-sm hover:shadow-md transform hover:scale-105"
+              onClick={() => setSelectedCategory(category)}
+              className={`px-6 py-2 rounded-full border-2 font-medium shadow-sm hover:shadow-md transform hover:scale-105 transition-all duration-300 ${
+                selectedCategory === category
+                  ? 'bg-emerald-600 text-white border-emerald-600'
+                  : 'border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white'
+              }`}
             >
               {category}
             </button>
@@ -427,7 +468,7 @@ const Buyplants = () => {
 
         {/* Featured Plants - First 9 */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {plantsData.slice(0, 9).map((plant) => (
+          {filteredPlants.slice(0, 9).map((plant) => (
             <CompactPlantCard key={plant.id} plant={plant} />
           ))}
         </div>

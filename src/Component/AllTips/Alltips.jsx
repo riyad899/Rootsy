@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Filter, Search, X, Heart } from 'lucide-react';
+import CopilotChat from '../CopilotChat.jsx/CopilotChat';
 
 export const Alltips = () => {
   const [tips, setTips] = useState([]);
@@ -313,6 +314,9 @@ export const Alltips = () => {
           })}
         </div>
       )}
+
+      {/* CopilotChat component for tips assistance */}
+      <CopilotChat />
     </div>
   );
 };

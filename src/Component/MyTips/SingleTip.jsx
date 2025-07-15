@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { FaHeart, FaRegHeart, FaArrowLeft } from 'react-icons/fa';
 import { AuthContext } from '../../Provider/AuthContext';
+import CopilotChat from '../CopilotChat.jsx/CopilotChat';
 
 export const SingleTip = () => {
   const { id } = useParams();
@@ -232,6 +233,9 @@ const deleteLike = async () => {
             )}
           </div>
         </div>
+
+        {/* CopilotChat component for tips assistance */}
+        <CopilotChat />
       </div>
     </div>
   );
