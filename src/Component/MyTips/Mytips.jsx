@@ -4,13 +4,18 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import CopilotChat from '../CopilotChat.jsx/CopilotChat';
+import { UseApiousSecure } from '../../hooks/UseApiousSecure';
 
 export const Mytips = () => {
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
-    const [userTips, setUserTips] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+
+    // Use centralized API hooks
+    const { data: allTips = [], isLoading: loading, error: queryError, refetch } = UseApiousSecure.useTips();
+    const updateTipMutation = UseApiousSecure.useUpdateTip();
+    const deleteTipMutation = UseApiousSecure.useDeleteTip();
+    const uploadImageMutation = UseApiousSecure.useUploadImage();
+
     const [deleteStatus, setDeleteStatus] = useState({ success: null, message: '' });
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [tipToDelete, setTipToDelete] = useState(null);
@@ -27,6 +32,10 @@ export const Mytips = () => {
     });
     const [previewImage, setPreviewImage] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
+
+    // Filter user tips from all tips
+    const userTips = allTips.filter(tip => tip.userEmail === user?.email);
+    const error = queryError?.message;
 
     const handleDeleteClick = (id) => {
         setTipToDelete(id);
@@ -70,17 +79,11 @@ export const Mytips = () => {
 
         try {
             setIsUploading(true);
-            const response = await fetch(`https://backend-test-blush.vercel.app/tips/${tipToUpdate}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(updateTips)
-            });
 
-            if (!response.ok) {
-                throw new Error('Failed to update tip');
-            }
+            await updateTipMutation.mutateAsync({
+                id: tipToUpdate,
+                data: updateTips
+            });
 
             toast.success('Tip updated successfully!', {
                 position: "top-right",
@@ -94,17 +97,9 @@ export const Mytips = () => {
 
             setShowUpdateModal(false);
 
-            // Refresh the tips list
-            const updatedResponse = await fetch('https://backend-test-blush.vercel.app/tips');
-            const updatedData = await updatedResponse.json();
-            const filteredTips = updatedData.filter(tip =>
-                tip.userEmail === user?.email?.toLowerCase()
-            );
-            setUserTips(filteredTips);
-
             // Navigate to tips section after a short delay
             setTimeout(() => {
-                navigate(`'/tips/${tipToUpdate}'`);
+                navigate(`/tips/${tipToUpdate}`);
             }, 1000);
         } catch (error) {
             console.error('Error updating tip:', error);
@@ -124,16 +119,15 @@ export const Mytips = () => {
 
     const handleImageUpload = async (file) => {
         if (!file.type.match('image.*')) {
-            setError('Please upload an image file');
+            toast.error('Please upload an image file');
             return;
         }
 
         if (file.size > 5 * 1024 * 1024) {
-            setError('Image size should be less than 5MB');
+            toast.error('Image size should be less than 5MB');
             return;
         }
 
-        setError(null);
         setIsUploading(true);
 
         // Preview image
@@ -149,9 +143,9 @@ export const Mytips = () => {
         formData.append('image', file);
 
         try {
-            const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
-                method: 'POST',
-                body: formData
+            const response = await uploadImageMutation.mutateAsync({
+                formData,
+                apiKey
             });
 
             const data = await response.json();
@@ -184,15 +178,9 @@ export const Mytips = () => {
 
         try {
             setDeleteStatus({ success: null, message: 'Deleting...' });
-            const response = await fetch(`https://backend-test-blush.vercel.app/tips/${tipToDelete}`, {
-                method: 'DELETE'
-            });
 
-            if (!response.ok) {
-                throw new Error('Failed to delete tip');
-            }
+            await deleteTipMutation.mutateAsync(tipToDelete);
 
-            setUserTips(prevTips => prevTips.filter(tip => tip._id !== tipToDelete));
             setDeleteStatus({ success: true, message: 'Tip deleted successfully!' });
             setShowDeleteModal(false);
             setTipToDelete(null);
@@ -230,33 +218,6 @@ export const Mytips = () => {
         setShowDeleteModal(false);
         setTipToDelete(null);
     };
-
-    useEffect(() => {
-        const fetchTips = async () => {
-            try {
-                const response = await fetch('https://backend-test-blush.vercel.app/tips');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const data = await response.json();
-
-                // Filter tips by the current user
-                const filteredTips = data.filter(tip =>
-                    tip.userEmail === user?.email?.toLowerCase()
-                );
-                setUserTips(filteredTips);
-            } catch (err) {
-                console.error('Error fetching tips:', err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (user?.email) {
-            fetchTips();
-        }
-    }, [user]);
 
     if (loading) return (
         <div className="flex justify-center items-center h-64">

@@ -5,10 +5,15 @@ import CopilotChat from '../CopilotChat.jsx/CopilotChat';
 import '@copilotkit/react-ui/styles.css';
 import { motion } from 'framer-motion';
 import { FaLeaf, FaUser, FaEnvelope, FaBook, FaEye, FaTags, FaClipboardList } from 'react-icons/fa';
+import { UseApiousSecure } from '../../hooks/UseApiousSecure';
 
 export const ShareTips = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  // Use centralized API hooks
+  const { data: users = [] } = UseApiousSecure.useUsers();
+  const createTipMutation = UseApiousSecure.useCreateTip();
 
   const [formData, setFormData] = useState({
     title: '',
@@ -26,47 +31,31 @@ export const ShareTips = () => {
 
   // Initialize user data when component mounts or user changes
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (!user) {
-        navigate('/login', { state: { from: '/share-tips' } });
-        return;
-      }
+    if (!user) {
+      navigate('/login', { state: { from: '/share-tips' } });
+      return;
+    }
 
-      try {
-        const response = await fetch("https://backend-test-blush.vercel.app/users");
-        if (!response.ok) throw new Error('Failed to fetch user data');
+    if (users.length > 0) {
+      const AuthEmail = user.email.toLowerCase();
+      // Find the current user from the fetched list
+      const currentUser = users.find(u => u.email.toLowerCase() === AuthEmail);
 
-        const data = await response.json();
-        const AuthEmail = user.email.toLowerCase();
-
-        // Find the current user from the fetched list
-        const currentUser = data.find(u => u.email.toLowerCase() === AuthEmail);
-
-        if (currentUser) {
-          setFormData(prev => ({
-            ...prev,
-            userName: currentUser.name || '',
-            userEmail: currentUser.email || ''
-          }));
-        } else {
-          // Fallback: only set email if user not found
-          setFormData(prev => ({
-            ...prev,
-            userEmail: user.email || ''
-          }));
-        }
-      } catch (err) {
-        console.error('Error fetching user data:', err);
-        // Fallback: only set email if fetch fails
+      if (currentUser) {
+        setFormData(prev => ({
+          ...prev,
+          userName: currentUser.name || '',
+          userEmail: currentUser.email || ''
+        }));
+      } else {
+        // Fallback: only set email if user not found
         setFormData(prev => ({
           ...prev,
           userEmail: user.email || ''
         }));
       }
-    };
-
-    fetchUserData();
-  }, [user, navigate]);
+    }
+  }, [user, navigate, users]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -100,20 +89,11 @@ export const ShareTips = () => {
         userEmail: formData.userEmail,
         createdAt: new Date().toISOString()
       };
-      console.log(tipData)
-      // Make POST request to your backend API
-      const response = await fetch('https://backend-test-blush.vercel.app/tips', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(tipData)
-      });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to share tip');
-      }
+      console.log(tipData);
+
+      // Use the mutation to create the tip
+      await createTipMutation.mutateAsync(tipData);
 
       // On success, redirect to tips page with success message
       navigate('/my-tips', { state: { message: 'Tip shared successfully!' } });

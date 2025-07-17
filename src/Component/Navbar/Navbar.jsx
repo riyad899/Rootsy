@@ -3,10 +3,9 @@ import Marquee from "react-fast-marquee";
 import leaf from '../../images/t.png';
 import { BsClock } from "react-icons/bs";
 import { CiPhone, CiMail, CiTwitter } from "react-icons/ci";
-import { FaFacebookF, FaInstagram, FaPinterest, FaLeaf, FaSignInAlt, FaUserPlus, FaFire, FaShoppingCart, FaBell, FaEnvelope } from 'react-icons/fa';
+import { FaFacebookF, FaInstagram, FaPinterest, FaLeaf, FaSignInAlt, FaUserPlus, FaFire, FaShoppingCart, FaBell, FaEnvelope, FaHome, FaUsers, FaLightbulb, FaSeedling, FaStore } from 'react-icons/fa';
 import { NavLink, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../Provider/AuthContext';
-import { router } from '../../Routes/routes';
 
 export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -187,11 +186,11 @@ export const Navbar = () => {
   ];
 
   const navLinks = [
-    { name: 'Home', href: '/', private: false },
-    { name: 'Explore Gardeners', href: '/explore', private: false },
-    { name: 'Browse Tips', href: '/tips', private: false },
-    { name: 'Buy Plants', href: '/buy-plants', private: true },
-    { name: 'Sell Plants', href: '/sell-plants', private: true },
+    { name: 'Home', href: '/', private: false, icon: FaHome },
+    { name: 'Explore Gardeners', href: '/explore', private: false, icon: FaUsers },
+    { name: 'Browse Tips', href: '/tips', private: false, icon: FaLightbulb },
+    { name: 'Buy Plants', href: '/buy-plants', private: true, icon: FaSeedling },
+    { name: 'Sell Plants', href: '/sell-plants', private: true, icon: FaStore },
   ];
 
   // Filter nav links based on authentication
@@ -225,27 +224,31 @@ export const Navbar = () => {
               </div>
               {/* Desktop Navigation */}
               <div className="hidden sm:ml-8 sm:flex sm:space-x-8">
-                {filteredNavLinks.map((link) => (
-                  <NavLink
-                    key={link.name}
-                    to={link.href}
-                    className={({ isActive }) => {
-                      let baseClasses = "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all duration-300 hover:scale-105";
+                {filteredNavLinks.map((link) => {
+                  const IconComponent = link.icon;
+                  return (
+                    <NavLink
+                      key={link.name}
+                      to={link.href}
+                      className={({ isActive }) => {
+                        let baseClasses = "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-all duration-300 hover:scale-105";
 
-                      if (isScrolled || !isHomePage) {
-                        return isActive
-                          ? `${baseClasses} border-emerald-500 text-emerald-700`
-                          : `${baseClasses} border-transparent text-gray-600 hover:border-emerald-300 hover:text-emerald-700`;
-                      } else {
-                        return isActive
-                          ? `${baseClasses} border-emerald-300 text-emerald-800`
-                          : `${baseClasses} border-transparent text-emerald-700/90 hover:border-emerald-300/70 hover:text-emerald-800`;
-                      }
-                    }}
-                  >
-                    {link.name}
-                  </NavLink>
-                ))}
+                        if (isScrolled || !isHomePage) {
+                          return isActive
+                            ? `${baseClasses} border-emerald-500 text-emerald-700`
+                            : `${baseClasses} border-transparent text-gray-600 hover:border-emerald-300 hover:text-emerald-700`;
+                        } else {
+                          return isActive
+                            ? `${baseClasses} border-emerald-300 text-emerald-800`
+                            : `${baseClasses} border-transparent text-emerald-700/90 hover:border-emerald-300/70 hover:text-emerald-800`;
+                        }
+                      }}
+                    >
+                      <IconComponent className="mr-2 h-4 w-4" />
+                      {link.name}
+                    </NavLink>
+                  );
+                })}
               </div>
             </div>
 
@@ -690,21 +693,25 @@ export const Navbar = () => {
 
             </div>
 
-            {filteredNavLinks.map((link) => (
-              <NavLink
-                key={link.name}
-                to={link.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={({ isActive }) =>
-                  `block pl-3 pr-4 py-2 border-l-4 text-base font-medium transition-all duration-300 ${isActive
-                    ? 'border-emerald-500 text-emerald-700 bg-emerald-50'
-                    : 'border-transparent text-gray-600 hover:border-emerald-300 hover:text-emerald-700 hover:bg-emerald-50'
-                  }`
-                }
-              >
-                {link.name}
-              </NavLink>
-            ))}
+            {filteredNavLinks.map((link) => {
+              const IconComponent = link.icon;
+              return (
+                <NavLink
+                  key={link.name}
+                  to={link.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center pl-3 pr-4 py-2 border-l-4 text-base font-medium transition-all duration-300 ${isActive
+                      ? 'border-emerald-500 text-emerald-700 bg-emerald-50'
+                      : 'border-transparent text-gray-600 hover:border-emerald-300 hover:text-emerald-700 hover:bg-emerald-50'
+                    }`
+                  }
+                >
+                  <IconComponent className="mr-3 h-4 w-4" />
+                  {link.name}
+                </NavLink>
+              );
+            })}
             {user ? (
               <div className="mt-4 pt-4 border-t border-emerald-200 px-4">
                 <div className="flex items-center mb-4">

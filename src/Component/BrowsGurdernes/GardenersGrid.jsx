@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { UseApiousSecure } from '../../hooks/UseApiousSecure';
 
 const GardenersGrid = () => {
-  const [gardeners, setGardeners] = useState([]);
   const [filteredGardeners, setFilteredGardeners] = useState([]);
-  const [tips, setTips] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Use the centralized API hook for tips and users
+  const { tips, users, isLoading: loading, isError, error } = UseApiousSecure.useTipsAndUsers();
+
+  const gardeners = users.data || [];
+  const tipsData = tips.data || [];
 
   function countUserTips(tipsData, userEmail) {
     return tipsData.filter(tip => tip.userEmail === userEmail).length;
@@ -49,41 +52,10 @@ const GardenersGrid = () => {
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-
-        // Fetch tips and users in parallel
-        const [tipsResponse, usersResponse] = await Promise.all([
-          fetch('https://backend-test-blush.vercel.app/tips'),
-          fetch('https://backend-test-blush.vercel.app/users')
-        ]);
-
-        if (!tipsResponse.ok || !usersResponse.ok) {
-          throw new Error(`Server responded with ${tipsResponse.status} or ${usersResponse.status}`);
-        }
-
-        const tipsData = await tipsResponse.json();
-        const usersData = await usersResponse.json();
-
-        // Validate data structure
-        if (!Array.isArray(tipsData) || !Array.isArray(usersData)) {
-          throw new Error('Expected arrays for both tips and users');
-        }
-
-        setTips(tipsData);
-        setGardeners(usersData);
-        setFilteredGardeners(usersData);
-        setError(null);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+    if (gardeners.length > 0) {
+      setFilteredGardeners(gardeners);
+    }
+  }, [gardeners]);
 
   useEffect(() => {
     if (searchTerm.trim() === '') {
@@ -112,7 +84,7 @@ const GardenersGrid = () => {
     );
   }
 
-  if (error) {
+  if (isError || error) {
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto mt-8">
         <div className="flex">
@@ -124,7 +96,7 @@ const GardenersGrid = () => {
           <div className="ml-3">
             <h3 className="text-sm font-medium text-red-800">Error loading gardeners</h3>
             <div className="mt-2 text-sm text-red-700">
-              <p>{error}</p>
+              <p>{error || 'Failed to load data'}</p>
             </div>
           </div>
         </div>
@@ -257,7 +229,7 @@ const GardenersGrid = () => {
                               <svg className="h-4 w-4 text-yellow-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                               </svg>
-                              {countUserTips(tips, gardener.email)} tips shared
+                              {countUserTips(tipsData, gardener.email)} tips shared
                             </span>
                           </p>
                         </div>

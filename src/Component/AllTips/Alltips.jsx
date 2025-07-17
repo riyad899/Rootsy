@@ -1,18 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Filter, Search, X, Heart } from 'lucide-react';
 import CopilotChat from '../CopilotChat.jsx/CopilotChat';
+import { UseApiousSecure } from '../../hooks/UseApiousSecure';
 
 export const Alltips = () => {
-  const [tips, setTips] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [likes, setLikes] = useState([]);
+  // Use centralized API hooks
+  const { tips, users, likes, isLoading: loading, isError, error } = UseApiousSecure.useTipsUsersAndLikes();
+
   const [filteredTips, setFilteredTips] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [difficultyFilter, setDifficultyFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+
+  // Extract data from queries
+  const tipsData = tips.data || [];
+  const usersData = users.data || [];
+  const likesData = likes.data || [];
 
   // Calculate time since post was created
   const getTimeAgo = (dateString) => {
@@ -38,58 +42,38 @@ export const Alltips = () => {
 
   // Get user by ID
   const getUserById = (userId) => {
-    return users.find(user => user._id === userId) || null;
+    return usersData.find(user => user._id === userId) || null;
   };
 
   // Count likes for a tip
   const getLikeCount = (tipId) => {
-    return likes.filter(like => like.id === tipId).length;
+    return likesData.filter(like => like.id === tipId).length;
   };
 
-  // Fetch data on component mount
+  // Update filtered tips when data or filters change
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        console.log('Fetching data...'); // Debug log
-        const [tipsResponse, usersResponse, likesResponse] = await Promise.all([
-          fetch('http://localhost:3000/tips'),
-          fetch('https://backend-test-blush.vercel.app/users'),
-          fetch('http://localhost:3000/like')
-        ]);
+    if (tipsData.length > 0) {
+      console.log('Total tips received:', tipsData.length); // Debug log
+      console.log('Total users received:', usersData.length); // Debug log
+      console.log('Total likes received:', likesData.length); // Debug log
 
-        if (!tipsResponse.ok || !usersResponse.ok || !likesResponse.ok) {
-          throw new Error('Failed to fetch data');
-        }
+      setFilteredTips(tipsData);
+    }
+  }, [tipsData, usersData, likesData]);
 
-        const [tipsData, usersData, likesData] = await Promise.all([
-          tipsResponse.json(),
-          usersResponse.json(),
-          likesResponse.json()
-        ]);
-
-        console.log('Total tips received:', tipsData.length); // Debug log
-        console.log('Total users received:', usersData.length); // Debug log
-        console.log('Total likes received:', likesData.length); // Debug log
-
-        // Set all tips without filtering for public/private
-        setUsers(usersData);
-        setTips(tipsData);
-        setFilteredTips(tipsData);
-        setLikes(likesData);
-      } catch (err) {
-        console.error('Error fetching data:', err); // Debug log
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  // Handle error state
+  if (isError || error) {
+    console.error('Error fetching data:', error); // Debug log
+    return (
+      <div className="p-4 text-red-500 text-center">
+        Error: {error || 'Failed to load data'}
+      </div>
+    );
+  }
 
   // Apply filters when they change
   useEffect(() => {
-    let result = [...tips];
+    let result = [...tipsData];
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
@@ -120,7 +104,7 @@ export const Alltips = () => {
 
     console.log('Filtered tips count:', result.length); // Debug log
     setFilteredTips(result);
-  }, [difficultyFilter, categoryFilter, searchQuery, tips, users]);
+  }, [difficultyFilter, categoryFilter, searchQuery, tipsData, usersData]);
 
   const clearSearch = () => setSearchQuery('');
   const toggleFilters = () => setShowFilters(!showFilters);

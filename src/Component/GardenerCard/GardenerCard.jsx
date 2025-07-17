@@ -1,29 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { UseApiousSecure } from '../../hooks/UseApiousSecure';
 
 const GardenerCard = () => {
-  const [gardeners, setGardeners] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [selectedGardener, setSelectedGardener] = useState(null);
 
-  useEffect(() => {
-    const fetchGardeners = async () => {
-      try {
-        const response = await fetch('https://backend-test-blush.vercel.app/plants');
-        if (!response.ok) {
-          throw new Error('Failed to fetch gardeners');
-        }
-        const data = await response.json();
-        setGardeners(data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchGardeners();
-  }, []);
+  // Use centralized API hook for plants data
+  const { data: gardeners = [], isLoading: loading, error } = UseApiousSecure.usePlants();
 
   if (loading) return (
     <div className="flex justify-center items-center h-64">
@@ -33,7 +15,7 @@ const GardenerCard = () => {
 
   if (error) return (
     <div className="p-4 text-red-500 text-center">
-      Error: {error}
+      Error: {error.message || 'Failed to load gardeners'}
     </div>
   );
 

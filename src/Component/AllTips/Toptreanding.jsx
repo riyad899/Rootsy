@@ -1,77 +1,65 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
+import { UseApiousSecure } from '../../hooks/UseApiousSecure';
 
 export const Toptreanding = () => {
-  const [tips, setTips] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [activeCategory, setActiveCategory] = useState('All');
 
-  useEffect(() => {
-    const fetchTips = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('https://backend-test-blush.vercel.app/tips');
+  // Use the centralized API hook
+  const { data: allTips = [], isLoading: loading, error: queryError } = UseApiousSecure.useTips();
 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch tips: ${response.status} ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        const publicTips = data.filter(tip => tip.availability === 'Public');
-        setTips(publicTips.slice(0, 5)); // Limit to 5 tips
-      } catch (err) {
-        console.error('Error fetching tips:', err);
-        setError(err.message);
-        // Fallback demo data for display
-        setTips([
-          {
-            _id: '1',
-            title: 'Perfect Watering Schedule for Indoor Plants',
-            description: 'Learn the optimal watering techniques to keep your houseplants thriving year-round.',
-            category: 'Interiors',
-            difficulty: 'Easy',
-            location: 'Indoor Garden'
-          },
-          {
-            _id: '2',
-            title: 'Creating a Butterfly Garden Paradise',
-            description: 'Transform your outdoor space into a vibrant butterfly sanctuary with these proven methods.',
-            category: 'Gardens',
-            difficulty: 'Medium',
-            location: 'Backyard'
-          },
-          {
-            _id: '3',
-            title: 'Urban Balcony Herb Garden Setup',
-            description: 'Maximize small spaces with this comprehensive guide to growing fresh herbs in the city.',
-            category: 'Urban',
-            difficulty: 'Easy',
-            location: 'Balcony'
-          },
+  // Process tips data
+  const tips = useMemo(() => {
+    if (!allTips.length) {
+      // Fallback demo data for display
+      return [
+        {
+          _id: '1',
+          title: 'Perfect Watering Schedule for Indoor Plants',
+          description: 'Learn the optimal watering techniques to keep your houseplants thriving year-round.',
+          category: 'Interiors',
+          difficulty: 'Easy',
+          location: 'Indoor Garden'
+        },
+        {
+          _id: '2',
+          title: 'Creating a Butterfly Garden Paradise',
+          description: 'Transform your outdoor space into a vibrant butterfly sanctuary with these proven methods.',
+          category: 'Gardens',
+          difficulty: 'Medium',
+          location: 'Backyard'
+        },
+        {
+          _id: '3',
+          title: 'Urban Balcony Herb Garden Setup',
+          description: 'Maximize small spaces with this comprehensive guide to growing fresh herbs in the city.',
+          category: 'Urban',
+          difficulty: 'Easy',
+          location: 'Balcony'
+        },
           {
             _id: '4',
             title: 'Seasonal Pruning Techniques',
             description: 'Master the art of pruning with seasonal timing and proper techniques for healthy plant growth.',
             category: 'Maintenance',
             difficulty: 'Hard',
-            location: 'Garden'
-          },
-          {
-            _id: '5',
-            title: 'Soil Composition for Thriving Plants',
-            description: 'Understand soil pH, nutrients, and composition for creating the perfect growing environment.',
-            category: 'Gardens',
-            difficulty: 'Medium',
-            location: 'Outdoor'
-          }
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    };
+          location: 'Garden'
+        },
+        {
+          _id: '5',
+          title: 'Soil Composition for Thriving Plants',
+          description: 'Understand soil pH, nutrients, and composition for creating the perfect growing environment.',
+          category: 'Gardens',
+          difficulty: 'Medium',
+          location: 'Outdoor'
+        }
+      ];
+    }
 
-    fetchTips();
-  }, []);
+    const publicTips = allTips.filter(tip => tip.availability === 'Public');
+    return publicTips.slice(0, 5); // Limit to 5 tips
+  }, [allTips]);
+
+  const error = queryError?.message;
 
   const handleViewPost = (postId) => {
     console.log('Navigating to post:', postId);

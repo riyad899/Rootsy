@@ -6,10 +6,16 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../Provider/AuthContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { UseApiousSecure } from '../../hooks/UseApiousSecure';
 
 export const Registration = () => {
   const { createUser, setUser, googleSignIn } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  // Use centralized API hooks
+  const createUserMutation = UseApiousSecure.useCreateUser();
+  const createApiUserMutation = UseApiousSecure.useCreateApiUser();
+
   const [errorMessage, setErrorMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -101,20 +107,9 @@ export const Registration = () => {
         status: 'active'
       };
 
-      const response = await fetch('https://backend-test-blush.vercel.app/users', {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await userCredential.user.getIdToken()}`
-        },
-        body: JSON.stringify(completeProfile)
-      });
+      // Use the mutation to create user
+      await createUserMutation.mutateAsync(completeProfile);
 
-      if (!response.ok) {
-        throw new Error('Failed to save user profile');
-      }
-
-      const data = await response.json();
       setUser(userCredential.user);
 
       toast.success('🎉 Successfully registered!', {
@@ -158,18 +153,8 @@ export const Registration = () => {
         status: 'active'
       };
 
-      const response = await fetch('https://backend-test-blush.vercel.app/api/users', {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await user.getIdToken()}`
-        },
-        body: JSON.stringify(userProfile)
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to save user profile');
-      }
+      // Use the alternative API user mutation for Google signup
+      await createApiUserMutation.mutateAsync(userProfile);
 
       toast.success('🎉 Google registration successful!', {
         position: "top-right",
