@@ -1,8 +1,4 @@
 import React, { useContext, useState, useEffect } from 'react';
-import Marquee from "react-fast-marquee";
-import leaf from '../../images/t.png';
-import { BsClock } from "react-icons/bs";
-import { CiPhone, CiMail, CiTwitter } from "react-icons/ci";
 import { FaFacebookF, FaInstagram, FaPinterest, FaLeaf, FaSignInAlt, FaUserPlus, FaFire, FaShoppingCart, FaBell, FaEnvelope, FaHome, FaUsers, FaLightbulb, FaSeedling, FaStore } from 'react-icons/fa';
 import { NavLink, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../Provider/AuthContext';

@@ -1,17 +1,15 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { IoChevronBack, IoChevronForward } from 'react-icons/io5';
-import { useSwipeable } from 'react-swipeable';
-import { Navbar } from '../../Component/Navbar/Navbar';
-import GardenerCard from '../../Component/GardenerCard/GardenerCard';
-import GardenersGrid from '../../Component/BrowsGurdernes/GardenersGrid';
-import { Toptreanding } from '../../Component/AllTips/Toptreanding';
-import About from '../../Component/About/About';
-import CopilotChat from '../../Component/CopilotChat.jsx/CopilotChat';
-import '@copilotkit/react-ui/styles.css';
-import Buyplants from '../../Component/BuyAndSell/Buyplants';
+import { ChevronLeft, ChevronRight, Share2 } from 'lucide-react';
+import { MostViralTip } from './components/MostViralTip';
+import GardeningEvents from './components/GardeningEvents';
+import CustomerTestimonials from './components/CustomerTestimonials';
+import TopGardener from './components/Topgardener';
+import AboutUs from './components/AboutUs';
 
-import { ChevronLeft, ChevronRight, Share2, Sparkles } from 'lucide-react';
+// Import new components
+
 
 export const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -26,310 +24,310 @@ export const Home = () => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
   const [leavesAnimated, setLeavesAnimated] = useState(false);
 
-  const slides = [
-    {
-      subtitle: 'Organic & Sustainable',
-      title: 'For the love of',
-      titleHighlight: 'homegrown',
-      description: 'Grow your own vegetables and experience the joy of fresh harvests that nourish both body and soul',
-      cta: 'View Planting Guide',
-      link: '#guides',
-      accent: '#059669'
-    },
-    {
-      subtitle: 'Seasonal Gardening',
-      title: 'Flavors Grown in',
-      titleHighlight: 'Your Backyard',
-      description: 'Learn what to plant each season for continuous harvests throughout the year',
-      cta: 'Seasonal Calendar',
-      link: '#calendar',
-      accent: '#0d9488'
-    },
-    {
-      subtitle: 'Garden to Table',
-      title: 'Where every plant',
-      titleHighlight: 'tells a story',
-      description: 'Discover the magical journey from tiny seed to your dinner plate',
-      cta: 'Get Gardening Tips',
-      link: '#tips',
-      accent: '#047857'
-    }
-  ];
-
-  // Leaf SVG component for InfoSection
-  const LeafSVG = ({ className, style }) => (
-    <svg
-      className={className}
-      style={style}
-      viewBox="0 0 100 120"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M50 5C30 15 10 35 15 65C20 85 35 100 50 115C65 100 80 85 85 65C90 35 70 15 50 5Z"
-        fill="url(#leafGradient)"
-        stroke="#059669"
-        strokeWidth="1"
-      />
-      <path
-        d="M50 15L50 105"
-        stroke="#0d9488"
-        strokeWidth="2"
-      />
-      <path
-        d="M50 25C45 30 40 40 42 50M50 35C55 40 60 50 58 60M50 45C45 50 40 60 42 70"
-        stroke="#047857"
-        strokeWidth="1"
-        opacity="0.7"
-      />
-      <defs>
-        <linearGradient id="leafGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#059669" />
-          <stop offset="50%" stopColor="#0d9488" />
-          <stop offset="100%" stopColor="#047857" />
-        </linearGradient>
-      </defs>
-    </svg>
-  );
-
-  // Touch/swipe handling
-  const [touchStart, setTouchStart] = useState(null);
-  const [touchEnd, setTouchEnd] = useState(null);
-
-  const minSwipeDistance = 50;
-
-  const onTouchStart = (e) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const onTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
-
-  const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
-
-    if (isLeftSwipe) {
-      nextSlide();
-    } else if (isRightSwipe) {
-      prevSlide();
-    }
-  };
-
-  // Animation variants for hero section
-  const slideVariants = {
-    enter: (direction) => ({
-      x: direction > 0 ? 1000 : -1000,
-      opacity: 0,
-      rotateY: direction > 0 ? 25 : -25,
-      scale: 0.8,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-      rotateY: 0,
-      scale: 1,
-    },
-    exit: (direction) => ({
-      x: direction < 0 ? 1000 : -1000,
-      opacity: 0,
-      rotateY: direction < 0 ? 25 : -25,
-      scale: 0.8,
-    })
-  };
-
-  const titleVariants = {
-    hidden: {
-      y: 100,
-      opacity: 0,
-      scale: 0.8,
-      rotateX: 45,
-    },
-    visible: {
-      y: 0,
-      opacity: 1,
-      scale: 1,
-      rotateX: 0,
-      transition: {
-        duration: 1.2,
-        ease: [0.25, 0.46, 0.45, 0.94],
-        staggerChildren: 0.1
+    const slides = [
+      {
+        subtitle: 'Organic & Sustainable',
+        title: 'For the love of',
+        titleHighlight: 'homegrown',
+        description: 'Grow your own vegetables and experience the joy of fresh harvests that nourish both body and soul',
+        cta: 'Get Gardening Tips',
+        link: '#guides',
+        accent: '#059669'
+      },
+      {
+        subtitle: 'Seasonal Gardening',
+        title: 'Flavors Grown in',
+        titleHighlight: 'Your Backyard',
+        description: 'Learn what to plant each season for continuous harvests throughout the year',
+        cta: 'Get Gardening Tips',
+        link: '#calendar',
+        accent: '#0d9488'
+      },
+      {
+        subtitle: 'Garden to Table',
+        title: 'Where every plant',
+        titleHighlight: 'tells a story',
+        description: 'Discover the magical journey from tiny seed to your dinner plate',
+        cta: 'Get Gardening Tips',
+        link: '#tips',
+        accent: '#047857'
       }
-    },
-    exit: {
-      y: -50,
-      opacity: 0,
-      scale: 1.1,
-      rotateX: -30,
-      transition: {
-        duration: 0.6,
-        ease: [0.25, 0.46, 0.45, 0.94]
-      }
-    }
-  };
+    ];
 
-  const letterVariants = {
-    hidden: {
-      y: 50,
-      opacity: 0,
-      rotateX: 90,
-    },
-    visible: (i) => ({
-      y: 0,
-      opacity: 1,
-      rotateX: 0,
-      transition: {
-        delay: i * 0.05,
-        duration: 0.8,
-        ease: [0.25, 0.46, 0.45, 0.94]
-      }
-    })
-  };
+    // Leaf SVG component for InfoSection
+    const LeafSVG = ({ className, style }) => (
+      <svg
+        className={className}
+        style={style}
+        viewBox="0 0 100 120"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M50 5C30 15 10 35 15 65C20 85 35 100 50 115C65 100 80 85 85 65C90 35 70 15 50 5Z"
+          fill="url(#leafGradient)"
+          stroke="#059669"
+          strokeWidth="1"
+        />
+        <path
+          d="M50 15L50 105"
+          stroke="#0d9488"
+          strokeWidth="2"
+        />
+        <path
+          d="M50 25C45 30 40 40 42 50M50 35C55 40 60 50 58 60M50 45C45 50 40 60 42 70"
+          stroke="#047857"
+          strokeWidth="1"
+          opacity="0.7"
+        />
+        <defs>
+          <linearGradient id="leafGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#059669" />
+            <stop offset="50%" stopColor="#0d9488" />
+            <stop offset="100%" stopColor="#047857" />
+          </linearGradient>
+        </defs>
+      </svg>
+    );
 
-  const subtitleVariants = {
-    hidden: {
-      x: -100,
-      opacity: 0,
-      scale: 0.8,
-    },
-    visible: {
-      x: 0,
-      opacity: 1,
-      scale: 1,
-      transition: {
-        delay: 0.2,
-        duration: 0.8,
-        ease: [0.25, 0.46, 0.45, 0.94]
-      }
-    }
-  };
+    // Touch/swipe handling
+    const [touchStart, setTouchStart] = useState(null);
+    const [touchEnd, setTouchEnd] = useState(null);
 
-  const descriptionVariants = {
-    hidden: {
-      y: 30,
-      opacity: 0,
-    },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        delay: 0.8,
-        duration: 0.8,
-        ease: [0.25, 0.46, 0.45, 0.94]
-      }
-    }
-  };
+    const minSwipeDistance = 50;
 
-  const buttonVariants = {
-    hidden: {
-      scale: 0,
-      opacity: 0,
-      rotate: -180,
-    },
-    visible: {
-      scale: 1,
-      opacity: 1,
-      rotate: 0,
-      transition: {
-        delay: 1.2,
-        duration: 0.8,
-        ease: [0.68, -0.55, 0.265, 1.55]
-      }
-    }
-  };
+    const onTouchStart = (e) => {
+      setTouchEnd(null);
+      setTouchStart(e.targetTouches[0].clientX);
+    };
 
-  // InfoSection count-up animation function
-  useEffect(() => {
-    const animateCount = (element, target) => {
-      if (!element) return;
-      let current = 0;
-      const increment = target / 60;
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-          clearInterval(timer);
-          current = target;
+    const onTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
+
+    const onTouchEnd = () => {
+      if (!touchStart || !touchEnd) return;
+      const distance = touchStart - touchEnd;
+      const isLeftSwipe = distance > minSwipeDistance;
+      const isRightSwipe = distance < -minSwipeDistance;
+
+      if (isLeftSwipe) {
+        nextSlide();
+      } else if (isRightSwipe) {
+        prevSlide();
+      }
+    };
+
+    // Animation variants for hero section
+    const slideVariants = {
+      enter: (direction) => ({
+        x: direction > 0 ? 1000 : -1000,
+        opacity: 0,
+        rotateY: direction > 0 ? 25 : -25,
+        scale: 0.8,
+      }),
+      center: {
+        x: 0,
+        opacity: 1,
+        rotateY: 0,
+        scale: 1,
+      },
+      exit: (direction) => ({
+        x: direction < 0 ? 1000 : -1000,
+        opacity: 0,
+        rotateY: direction < 0 ? 25 : -25,
+        scale: 0.8,
+      })
+    };
+
+    const titleVariants = {
+      hidden: {
+        y: 100,
+        opacity: 0,
+        scale: 0.8,
+        rotateX: 45,
+      },
+      visible: {
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        rotateX: 0,
+        transition: {
+          duration: 1.2,
+          ease: [0.25, 0.46, 0.45, 0.94],
+          staggerChildren: 0.1
         }
-        element.textContent = Math.floor(current);
-      }, 30);
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && !isInfoVisible) {
-          setIsInfoVisible(true);
-          // Trigger leaf animation first
-          setTimeout(() => setLeavesAnimated(true), 200);
-
-          // Then start counter animations
-          setTimeout(() => {
-            animateCount(yearsRef.current, 40);
-            animateCount(specialistsRef.current, 30);
-            animateCount(awardsRef.current, 15);
-          }, 800);
-
-          observer.disconnect();
+      },
+      exit: {
+        y: -50,
+        opacity: 0,
+        scale: 1.1,
+        rotateX: -30,
+        transition: {
+          duration: 0.6,
+          ease: [0.25, 0.46, 0.45, 0.94]
         }
-      });
-    }, { threshold: 0.3 });
-
-    if (yearsRef.current && specialistsRef.current && awardsRef.current) {
-      observer.observe(yearsRef.current.parentElement.parentElement);
-    }
-
-    return () => observer.disconnect();
-  }, [isInfoVisible]);
-
-  // Auto slide functionality
-  useEffect(() => {
-    const startAutoSlide = () => {
-      if (autoSlideRef.current) {
-        clearInterval(autoSlideRef.current);
-      }
-
-      if (!isHovered) {
-        autoSlideRef.current = setInterval(() => {
-          setDirection(1);
-          setCurrentSlide((prev) => (prev + 1) % slides.length);
-        }, 6000);
       }
     };
 
-    startAutoSlide();
+    const letterVariants = {
+      hidden: {
+        y: 50,
+        opacity: 0,
+        rotateX: 90,
+      },
+      visible: (i) => ({
+        y: 0,
+        opacity: 1,
+        rotateX: 0,
+        transition: {
+          delay: i * 0.05,
+          duration: 0.8,
+          ease: [0.25, 0.46, 0.45, 0.94]
+        }
+      })
+    };
 
-    return () => {
-      if (autoSlideRef.current) {
-        clearInterval(autoSlideRef.current);
+    const subtitleVariants = {
+      hidden: {
+        x: -100,
+        opacity: 0,
+        scale: 0.8,
+      },
+      visible: {
+        x: 0,
+        opacity: 1,
+        scale: 1,
+        transition: {
+          delay: 0.2,
+          duration: 0.8,
+          ease: [0.25, 0.46, 0.45, 0.94]
+        }
       }
     };
-  }, [isHovered, slides.length]);
 
-  const nextSlide = () => {
-    setDirection(1);
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
+    const descriptionVariants = {
+      hidden: {
+        y: 30,
+        opacity: 0,
+      },
+      visible: {
+        y: 0,
+        opacity: 1,
+        transition: {
+          delay: 0.8,
+          duration: 0.8,
+          ease: [0.25, 0.46, 0.45, 0.94]
+        }
+      }
+    };
 
-  const prevSlide = () => {
-    setDirection(-1);
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
+    const buttonVariants = {
+      hidden: {
+        scale: 0,
+        opacity: 0,
+        rotate: -180,
+      },
+      visible: {
+        scale: 1,
+        opacity: 1,
+        rotate: 0,
+        transition: {
+          delay: 1.2,
+          duration: 0.8,
+          ease: [0.68, -0.55, 0.265, 1.55]
+        }
+      }
+    };
 
-  const goToSlide = (index) => {
-    setDirection(index > currentSlide ? 1 : -1);
-    setCurrentSlide(index);
-  };
+    // InfoSection count-up animation function
+    useEffect(() => {
+      const animateCount = (element, target) => {
+        if (!element) return;
+        let current = 0;
+        const increment = target / 60;
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= target) {
+            clearInterval(timer);
+            current = target;
+          }
+          element.textContent = Math.floor(current);
+        }, 30);
+      };
 
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !isInfoVisible) {
+            setIsInfoVisible(true);
+            // Trigger leaf animation first
+            setTimeout(() => setLeavesAnimated(true), 200);
 
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
+            // Then start counter animations
+            setTimeout(() => {
+              animateCount(yearsRef.current, 25);
+              animateCount(specialistsRef.current, 50);
+              animateCount(awardsRef.current, 12);
+            }, 800);
 
-  return (
+            observer.disconnect();
+          }
+        });
+      }, { threshold: 0.3 });
+
+      if (yearsRef.current && specialistsRef.current && awardsRef.current) {
+        observer.observe(yearsRef.current.parentElement.parentElement);
+      }
+
+      return () => observer.disconnect();
+    }, [isInfoVisible]);
+
+    // Auto slide functionality
+    useEffect(() => {
+      const startAutoSlide = () => {
+        if (autoSlideRef.current) {
+          clearInterval(autoSlideRef.current);
+        }
+
+        if (!isHovered) {
+          autoSlideRef.current = setInterval(() => {
+            setDirection(1);
+            setCurrentSlide((prev) => (prev + 1) % slides.length);
+          }, 6000);
+        }
+      };
+
+      startAutoSlide();
+
+      return () => {
+        if (autoSlideRef.current) {
+          clearInterval(autoSlideRef.current);
+        }
+      };
+    }, [isHovered, slides.length]);
+
+    const nextSlide = () => {
+      setDirection(1);
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    };
+
+    const prevSlide = () => {
+      setDirection(-1);
+      setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+    };
+
+    const goToSlide = (index) => {
+      setDirection(index > currentSlide ? 1 : -1);
+      setCurrentSlide(index);
+    };
+
+    const handleMouseEnter = () => {
+      setIsHovered(true);
+    };
+
+    const handleMouseLeave = () => {
+      setIsHovered(false);
+    };
+
+ return (
     <div className="relative w-full overflow-hidden">
       {/* Continuous Dynamic Animated Background for entire component */}
       <motion.div
@@ -462,36 +460,6 @@ export const Home = () => {
                 animate="visible"
                 exit="exit"
               >
-                {/* Subtitle with Glass Effect */}
-                <motion.div
-                  variants={subtitleVariants}
-                  className="relative inline-block"
-                >
-                  <motion.div
-                    className="relative px-6 py-2 backdrop-blur-md bg-white/20 rounded-full border border-white/30 shadow-lg"
-                    whileHover={{
-                      scale: 1.05,
-                      boxShadow: "0 10px 30px rgba(0,0,0,0.1)"
-                    }}
-                  >
-                    <span className="text-xs md:text-sm font-medium tracking-[0.3em] text-emerald-800 uppercase">
-                      {slides[currentSlide].subtitle}
-                    </span>
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-emerald-400/20 to-teal-400/20 rounded-full"
-                      animate={{
-                        opacity: [0.2, 0.5, 0.2]
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    />
-                  </motion.div>
-                  <Sparkles className="absolute -top-1 -right-1 w-4 h-4 text-emerald-500" />
-                </motion.div>
-
                 {/* Main Title with Letter Animation */}
                 <motion.div
                   variants={titleVariants}
@@ -878,61 +846,30 @@ export const Home = () => {
               <p className="text-gray-500 text-sm leading-relaxed">Delivering exceptional solutions for your garden with decades of expertise.</p>
             </motion.div>
 
-            {/* Specialists with animated leaves */}
+            {/* Specialists */}
             <motion.div
-              className="text-center relative"
+              className="text-center"
               initial={{ opacity: 0, y: 50, scale: 0.95 }}
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.7 }}
               viewport={{ once: true }}
             >
-              {/* Left leaf */}
-              <motion.div
-                className="absolute -left-32 md:-left-30 -top-8 w-48 h-46"
-                initial={{ y: 20, opacity: 0, rotate: 45 }}
-                whileInView={{ y: 0, opacity: 1, rotate: 12 }}
-                transition={{ duration: 1.5, ease: "easeOut" }}
-                viewport={{ once: true }}
-              >
-                <LeafSVG
-                  className="w-full h-full filter drop-shadow-lg hover:drop-shadow-xl transition-all duration-300"
-                  style={{ transform: 'rotate(3deg)' }}
+              <div className="relative group">
+                <motion.div
+                  ref={specialistsRef}
+                  className="text-6xl font-bold text-emerald-700 mb-2 transition-all duration-300 group-hover:scale-110 group-hover:text-emerald-600"
+                  whileHover={{ scale: 1.1 }}
+                >
+                  0
+                </motion.div>
+                <motion.div
+                  className="absolute inset-0 bg-emerald-200 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-300 transform scale-125"
+                  whileHover={{ opacity: 0.2 }}
                 />
-              </motion.div>
-
-              {/* Content */}
-              <div className="z-10 relative group">
-                <div className="relative">
-                  <motion.div
-                    ref={specialistsRef}
-                    className="text-6xl font-bold text-emerald-700 mb-2 transition-all duration-300 group-hover:scale-110 group-hover:text-teal-600"
-                    whileHover={{ scale: 1.1 }}
-                  >
-                    0
-                  </motion.div>
-                  <motion.div
-                    className="absolute inset-0 bg-emerald-200 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-300 transform scale-125"
-                    whileHover={{ opacity: 0.2 }}
-                  />
-                </div>
-                <div className="text-lg font-semibold text-gray-800 uppercase mb-2 tracking-wider">SPECIALISTS</div>
-                <div className="text-gray-600 mb-3 font-medium">In landscaping design</div>
-                <p className="text-gray-500 text-sm leading-relaxed">We gather the finest talent, creating the most skilled specialist team in the industry.</p>
               </div>
-
-              {/* Right leaf */}
-              <motion.div
-                className="absolute -right-20 md:-right-30 -top-8 w-48 h-46"
-                initial={{ y: 20, opacity: 0, rotate: -45 }}
-                whileInView={{ y: 0, opacity: 1, rotate: -12 }}
-                transition={{ duration: 1.5, ease: "easeOut", delay: 0.3 }}
-                viewport={{ once: true }}
-              >
-                <LeafSVG
-                  className="w-full h-full filter drop-shadow-lg hover:drop-shadow-xl transition-all duration-300"
-                  style={{ transform: 'scaleX(-1) rotate(15deg)' }}
-                />
-              </motion.div>
+              <div className="text-lg font-semibold text-gray-800 uppercase mb-2 tracking-wider">SPECIALISTS</div>
+              <div className="text-gray-600 mb-3 font-medium">Expert Team</div>
+              <p className="text-gray-500 text-sm leading-relaxed">Professional garden specialists ready to transform your outdoor space.</p>
             </motion.div>
 
             {/* Awards */}
@@ -1003,11 +940,18 @@ export const Home = () => {
 
       {/* Other Components with white background */}
       <div className="relative z-10 bg-white">
-        <Buyplants />
-        <Toptreanding />
-        <GardenerCard />
-        <About />
+        {/* New Components */}
+
+        <MostViralTip />
+        <GardeningEvents />
+        <CustomerTestimonials />
+        <TopGardener />
+        <AboutUs />
+
+        {/* Commented out components - can be uncommented later */}
+        {/* <Buyplants />
+        <About /> */}
       </div>
     </div>
   );
-};
+}
