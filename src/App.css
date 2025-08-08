@@ -1,0 +1,20 @@
+@import "tailwindcss";
+ @plugin "daisyui" {
+   themes: light;
+ }
+ .playfair-display-font {
+  font-family: "Playfair Display", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+/* In your global.css or tailwind.css */
+:root {
+  --copilot-kit-primary-color: #1a3a27;
+  --copilot-kit-secondary-color: #e0e7ff;
+  --copilot-kit-font-family: Inter, sans-serif;
+  --copilot-kit-border-radius: 8px;
+}
+
+.copilotKit-sidebar-toggle svg {
+  color: #1a3a27 !important; /* or fill: #1a3a27 !important; */
+}
